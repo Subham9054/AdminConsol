@@ -1,0 +1,139 @@
+﻿@model CodeGen.Model.PrimaryLink.PrimaryModel
+@{
+     Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["Title"] = "In-Active Global Link";
+}
+
+@section Scripts {
+   
+    <script>
+        $(document).ready(function () {
+            $('#example1').DataTable();
+        });
+    </script>
+    <script>
+        function check_uncheck_checkbox(isChecked) {
+            if (isChecked) {
+                $('input[name="chkbox"]').each(function () {
+                    this.checked = true;
+                });
+            }
+            else {
+                $('input[name="chkbox"]').each(function () {
+                    this.checked = false;
+                });
+            }
+        }
+        function ClearField() {
+            $('input[type=checkbox]').prop('checked', false);
+        }
+        function validateForm() {
+            if ($('#example1 :checked').length == 0) {
+                alert("No record selected for Active!");
+                return false;
+            }
+            else {
+                return confirm('Are you sure you want to Mark As Active?');
+            }
+        }
+
+    </script>
+
+
+
+}
+
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>InActive Primary Link</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Primary Link</li>
+                    <li class="breadcrumb-item active" aria-current="page">InActive Primary Link</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs nav-fill" role="tablist">
+                    <a class="nav-item nav-link" asp-controller="PrimaryLink" asp-action="AddPrimaryLink">Add</a>
+                    <a class="nav-item nav-link" asp-controller="PrimaryLink" asp-action="ViewActivePrimaryLink">Active</a>
+                    <a class="nav-item nav-link active" asp-controller="PrimaryLink" asp-action="ViewInActivePrimaryLink">InActive</a>
+                </ul>
+                <div class="indicatorslist">
+                    <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (Model.PrimaryLinkList.Count != 0)
+                {
+                    <form id="frmCreatePrimaryLink" data-parsley-validate novalidate method="post" asp-action="MarkAsActive" asp-controller="PrimaryLink" asp-area="" asp-antiforgery="true" onsubmit="return validateForm()">
+                        <div class="table-responsive">
+                            <table data-toggle="table" class="table table-hover table-bordered table-padding" id="example1">
+
+                                <thead>
+                                    <tr>
+                                        <th width="10px"><input type="checkbox" id="checkBoxAll" onclick="check_uncheck_checkbox(this.checked)" /></th>
+                                        <th width="10px">SL#</th>
+                                        <th width="100px">Project Link Name</th>
+                                        <th width="100px">Global Link Name</th>
+                                        <th width="100px">Function Name</th>
+                                        <th width="100px">Primary Link Name</th>
+
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.PrimaryLinkList.Count != 0)
+                                    {
+                                        @foreach (var primarylink in Model.PrimaryLinkList.Select((x, i) => new { Data = x, Index = i + 1 }))
+                                        {
+
+                                    <tr>
+                                        <td><input type="checkbox" name="chkbox" value="@primarylink.Data.INTPLINKID" /></td>
+                                        <td>@primarylink.Index</td>
+                                        <td>@Html.DisplayFor(modelItem => primarylink.Data.NVCHPROJECTLINKNAME)</td>
+                                        <td>@Html.DisplayFor(modelItem => primarylink.Data.NVCHGLINKNAME)</td>
+                                        <td>@Html.DisplayFor(modelItem => primarylink.Data.VCHFUNCTION)</td>
+                                        <td>@Html.DisplayFor(modelItem => primarylink.Data.NVCHPLINKNAME)</td>
+
+                                    </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr style="text-align: center;font-size: x-large;font-weight: bolder;">
+                                            <td colspan='6' align='center'> No records found!</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <input asp-for="UpdatedBy" type="hidden" id="hdnGLinkID" value="1" />
+
+                            <button type="submit" name="submitButton" class="btn btn-primary btn-sm" title="Mark AS Active" value="submit">Mark AS Active</button>
+                            <button type="button"class="btn btn-danger" title="Reset" onclick="return ClearField();"><span class="localize" data-key="Reset">Reset</span></button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <h4>Record Not Found</h4>
+                }
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>

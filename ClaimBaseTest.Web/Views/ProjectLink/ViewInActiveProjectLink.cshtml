@@ -1,0 +1,143 @@
+﻿@model CodeGen.Model.ProjectMaster.ViewProjectLink
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["Title"] = "In Active Project Link";
+}
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            $('#example1').DataTable();
+        });
+    </script>
+    <script>
+        function check_uncheck_checkbox(isChecked) {
+            if (isChecked) {
+                $('input[name="chkbox"]').each(function () {
+                    this.checked = true;
+                });
+            }
+            else {
+                $('input[name="chkbox"]').each(function () {
+                    this.checked = false;
+                });
+            }
+        }
+          function ClearField() {
+            $('input[type=checkbox]').prop('checked', false);
+        }
+        function validateForm() {
+            if ($('#example1 :checked').length == 0) {
+                alert("No record selected for Active!");
+                return false;
+            }
+            else {
+                return confirm('Are you sure you want to Mark As Active?');
+            }
+        }
+
+    </script>
+    
+}
+@{
+    if (TempData["CommandStatus"] != null)
+    {
+        <script type="text/javascript">
+          alert('@(TempData["CommandStatus"])');
+        </script>
+    }
+
+}
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>InActive Project Link</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Project Link</li>
+                    <li class="breadcrumb-item active" aria-current="page">InActive Project Link</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link " asp-controller="ProjectLink" asp-action="AddProjectLink">Add</a>
+                        <a class="nav-item nav-link" asp-controller="ProjectLink" asp-action="ViewActiveProjectLink">Active</a>
+                        <a class="nav-item nav-link active" asp-controller="ProjectLink" asp-action="ViewInActiveProjectLink">InActive</a>
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    @if (Model.ViewProjectLinkDetailsmodel.Count != 0)
+                    {
+                        <form id="frmMarkInactive" data-parsley-validate novalidate method="post" asp-action="MarkActive"
+                              asp-controller="ProjectLink" asp-area="" asp-antiforgery="true" onsubmit="return validateForm()">
+                            <div class="table-responsive">
+                                <table data-toggle="table" class="table table-hover table-bordered table-padding" id="example1">
+
+                                    <thead>
+                                        <tr>
+                                            <th width="10px"><input type="checkbox" id="checkBoxAll" onclick="check_uncheck_checkbox(this.checked)" /></th>
+                                            <th width="10px">SL#</th>
+                                            <th width="100px">Project Name</th>
+
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.ViewProjectLinkDetailsmodel.Count != 0)
+                                        {
+                                            @foreach (var proj in Model.ViewProjectLinkDetailsmodel.Select((x, i) => new { Data = x, Index = i + 1 }))
+                                            {
+
+                                                <tr>
+                                                    <td><input type="checkbox" name="chkbox" value="@proj.Data.INTPROJECTLINKID" /></td>
+                                                    <td>@proj.Index</td>
+                                                    <td>@Html.DisplayFor(modelItem => proj.Data.NVCHPROJECTLINKNAME)</td>
+
+
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr style="text-align: center;font-size: x-large;font-weight: bolder;">
+                                                <td colspan='6' align='center'> No records found!</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                                <button type="submit" name="submitButton" id="btnsubmit" class="btn btn-primary mb-1t white-text" title="Mark AS Inactive" value="submit">Mark AS Active</button>
+                                <button type="button" value="Reset" class="btn btn-danger" onclick="return ClearField();"><span>Reset</span></button>
+                            </div>
+                        </form>
+                    }
+                    else
+
+                    {
+
+                        <h4>Record Not Found</h4>
+                    }
+
+                    <div class="table-responsive">
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+</div>

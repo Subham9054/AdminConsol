@@ -1,0 +1,792 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Title = "AddUser";
+}
+
+@section Scripts{
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                format: "dd-M-yyyy",
+                todayBtn: "linked",
+                autoclose: true,
+                endDate:new Date(),
+                //startDate: new Date(),
+                todayHighlight: true
+            });
+        });
+
+         function sentenceCase(str) {
+          str = str.toLowerCase().split(' ');
+        for (var i = 0; i < str.length; i++) {
+              str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+            }
+            var SentencecaseText = str.join(' ');
+            return SentencecaseText;
+
+        }
+        function checkPassword(str) {
+            var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
+            return re.test(str);
+        }
+        function validate() {
+             var dob = Date.parse($('#txtDOB').val());
+            var doj = Date.parse($('#txtDOJ').val());
+            var CurrentDate = new Date();
+            if ($('#txtName').val() == '') {
+                alert('Please enter Name!');
+                $('#txtName').focus();
+                return false;
+            }
+            else if ($('#txtUName').val() == '') {
+
+                alert('Please enter User Name!');
+                $('#txtUName').focus();
+                return false;
+            }
+            else if ($('#txtPwd').val() == '') {
+                alert('Please enter Password!');
+                $('#txtPwd').focus();
+                return false;
+            }
+            else if ($('#txtConPwd').val() == '') {
+                alert('Please enter Confirm Password!');
+                $('#txtConPwd').focus();
+                return false;
+            }
+                else if ($('#ddlHierarchy').val() == 0) {
+                alert('Please select Location!');
+                $('#ddlHierarchy').focus();
+                return false;
+            }
+            else if ($('#ddlLoc').val() == 0) {
+                alert('Please select Parent Level!');
+                $('#ddlLoc').focus();
+                return false;
+            }
+            else if ($('#ddlPhyLoc').val() == 0) {
+                alert('Please select Physical Location!');
+                $('#ddlPhyLoc').focus();
+                return false;
+            }
+            //else if ($('#txtDOJ').val() == '') {
+            //    alert('Please select Date Of Joining!');
+            //    $('#txtDOJ').focus();
+            //    return false;
+            //}
+            else if ($('#ddlDesgn').val() == 0) {
+                alert('Please select Designation!');
+                $('#ddlDesgn').focus();
+                return false;
+            }
+            //else if ($('#txtDOB').val() == '') {
+            //    alert('Please select Date of Birth!');
+            //    $('#txtDOB').focus();
+            //    return false;
+            //}
+            else if ($('#txtEmail').val() == '') {
+                alert('Please enter Email!');
+                $('#txtEmail').focus();
+                return false;
+            }
+            else if ($('#txtMob').val() == '') {
+                alert('Please enter Mobile!');
+                $('#txtMob').focus();
+                return false;
+            }
+            //   else if ($('#fuImg').val() == '') {
+            //    alert('Please select Image!');
+            //    $('#fuImg').focus();
+            //    return false;
+            //}
+            else if ($('#txtPwd').val() != $('#txtConPwd').val()) {
+                alert("Password and confirm password do not match!");
+                $('#txtConPwd').focus();
+                return false;
+            }
+            else if ($('#txtPwd').val().length<8)
+            {
+                alert("Password min 8 char!");
+                $('#txtPwd').focus();
+                return false;
+            }
+            else if (!checkPassword($('#txtPwd').val())) {
+                alert('Password must contain at least one lowercase letter,one uppercase letter,one number,one special character!');
+                $('#txtPwd').focus();
+                return false;
+            }
+            else if(IsEmail($('#txtEmail').val())==false){
+                alert('Please enter valid Email!');
+                $('#txtEmail').focus();
+              return false;
+            }
+            else if (doj > Date.parse(CurrentDate)) {
+                alert('Date of joining should be less than Todays date!');
+                $('#txtDOJ').focus();
+                return false;
+            }
+
+             else if (dob > Date.parse(CurrentDate)) {
+                alert('Date of birth should be less than Todays date!');
+                $('#txtDOB').focus();
+                return false;
+            }
+
+            else if (dob >= doj) {
+                alert('Date of birth should be greater than Date of joining!');
+                $('#txtDOJ').focus();
+                return false;
+            }
+
+            else if (calculate_age(new Date($('#txtDOB').val()))<18)
+            {
+                alert('Age must be above 18 !');
+                $('#txtDOB').focus();
+                return false;
+            }
+            else {
+                return true;
+            }
+
+
+        }
+        $('#btnSave').click(function () {
+            debugger;
+            if (validate()) {
+                if (confirm('Are you sure you  want to save?')) {
+                    var gender;
+                    if ($('#rbMale').prop('checked')==true) {
+                        gender = 'M';
+                    }
+                    else {
+                        gender = 'F';
+                    }
+                    var fileData = new FormData();
+                    if (window.FormData !== undefined) {
+                        
+                        var fileUpload = $("#fuImg").get(0);
+                        var files = fileUpload.files;
+                        for (var i = 0; i < files.length; i++) {
+                            fileData.append(files[i].name, files[i]);
+                        }
+                    }
+                      fileData.append("Name", $('#txtName').val());
+                      fileData.append("UserName",$('#txtUName').val());
+                      fileData.append("Password", $('#txtPwd').val());
+                      fileData.append("Location", $('#hfLocId').val());
+                    fileData.append("PhyscalLocation", $('#ddlPhyLoc').val());
+                   
+                    if ($('#txtDOJ').val() == "") {
+                        fileData.append("DOJ", "");
+                    }
+                    else {
+                        fileData.append("DOJ", $('#txtDOJ').val());
+                    }
+
+                     
+                      fileData.append("Designation", $('#ddlDesgn').val());
+                    fileData.append("Gender", gender);
+                    if ($('#txtDOB').val() == "") {
+
+                        fileData.append("DOB", "");
+                    }
+                    else {
+                        fileData.append("DOB", $('#txtDOB').val());
+                    }
+                     
+                      fileData.append("Email", $('#txtEmail').val());
+                      fileData.append("Mobile", $('#txtMob').val());
+                      AddUserData(fileData);
+                }
+            }
+        });
+
+        $('#ddlHierarchy').change(function () {
+            if ($('#ddlHierarchy').val() == 0) {
+                $('#trLoc').hide();
+                $('#trBlk').hide();
+                $('#trPanchayat').hide();
+                $('#trVillage').hide();
+            }
+            else {
+                var data = {
+                    hirarchyid: $('#ddlHierarchy').val()
+                };
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Content("~/User/getleveldetailsbyhirarchyid")',
+                    data: data,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+
+
+                        if (response.length > 0) {
+                             $('#trLoc').show();
+                             $('#lblDst').text(sentenceCase(response[0].nvchlabel));
+                             $("#ddlLoc").empty();
+                             $("#ddlLoc").append($('<option value="0">--Select--</option>'));
+                            for (var i = 0; i < response.length; i++) {
+                                $("#ddlLoc").append($('<option/>')
+                                    .val(response[i].intleveldetailid)
+                                    .html(response[i].nvchlevelname)
+                                );
+                            }
+                        }
+                        else {
+                              $('#trLoc').hide();
+                        }
+                    },
+                    error: function (error) {
+                        $('#trLoc').hide();
+                        console.log(error);
+                    }
+                });
+            }
+        });
+
+        function AddUserData(Data) {
+        $.ajax({
+           type: "POST",
+           url:"@Url.Action("AddUserData", "User")",
+           data: Data,
+           contentType: false, // Not to set any content header
+           processData: false, // Not to process data
+            success: function (res) {
+                if (res == '1') {
+                    alert('User created successfully!');
+                    location.reload(true);
+                }
+                else if (res == '4') {
+                    alert('Username already exist!');
+                }
+                else {
+                    alert(res);
+                }
+           },
+           failure: function (response) {
+               console.log(response.responseText);
+           },
+            error: function (response) {
+                console.log(response.responseText);
+            }
+        });
+    }
+        $('#btnReset').click(function () {
+              var newUrl ="@Url.Action("AddUser", "User")";
+              window.location.href = newUrl;
+        });
+        $(document).ready(function () {
+            $('#trLoc').hide();
+            $('#trBlk').hide();
+            $('#trPanchayat').hide();
+            $('#trVillage').hide();
+        });
+        function bindBlock(Id) {
+                     var vdata = {
+                         ParentId: Id
+                     };
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Content("~/User/getLevelDetailsByParentId")',
+                    data: vdata,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.length > 0) {
+                             $('#trBlk').show();
+                             $('#lblBlk').text(sentenceCase(response[0].nvchlabel));
+                             $("#ddlBlock").empty();
+                             var item = '<option value="0">--Select Block--</option>';
+                             $.each(response, function (i, block) {
+                             item += '<option value="' + block.intleveldetailid + '">' + block.nvchlevelname + '</option>'
+                             });
+                             $("#ddlBlock").html(item);
+                        }
+                         else {
+                              $('#trBlk').hide();
+                        }
+                       // $("#ddlBlock").append($('<option value="0">--Select Block--</option>'));
+                      //for (var i = 0; i < response.length; i++) {
+                      //  $("#ddlBlock").append($('<option/>')
+                      //  .val(response[i].intleveldetailid)
+                      //  .html(response[i].nvchlevelname)
+                      //  );
+                      //}
+                    },
+                    error: function (error) {
+                        $('#trBlk').hide();
+                    console.log(error);
+                    }
+               });
+        }
+        function bindPanchayat(Id) {
+                     var vdata = {
+                         ParentId: Id
+                     };
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Content("~/User/getLevelDetailsByParentId")',
+                    data: vdata,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.length > 0) {
+                            $('#trPanchayat').show();
+                            $('#lblPan').text(sentenceCase(response[0].nvchlabel));
+                            $("#ddlPanchayat").empty();
+                            $("#ddlPanchayat").append($('<option value="0">--Select Panchayat--</option>'));
+                            for (var i = 0; i < response.length; i++) {
+                                $("#ddlPanchayat").append($('<option/>')
+                                    .val(response[i].intleveldetailid)
+                                    .html(response[i].nvchlevelname)
+                                );
+                            }
+                        }
+                        else {
+                             $('#trPanchayat').hide();
+                        }
+                },
+                    error: function (error) {
+                        $('#trPanchayat').hide();
+                    console.log(error);
+                    }
+               });
+        }
+         function bindVillage(Id) {
+                     var vdata = {
+                         ParentId: Id
+                     };
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Content("~/User/getLevelDetailsByParentId")',
+                    data: vdata,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.length > 0) {
+                            $('#trVillage').show();
+                            $('#lblVil').text(sentenceCase(response[0].nvchlabel));
+                            $("#ddlVillage").empty();
+                            $("#ddlVillage").append($('<option value="0">--Select Village--</option>'));
+                            for (var i = 0; i < response.length; i++) {
+                                $("#ddlVillage").append($('<option/>')
+                                    .val(response[i].intleveldetailid)
+                                    .html(response[i].nvchlevelname)
+                                );
+                            }
+                        }
+                        else {
+                            $('#trVillage').hide();
+                        }
+                },
+                    error: function (error) {
+                        $('#trVillage').hide();
+                    console.log(error);
+                    }
+               });
+        }
+        $('#ddlLoc').change(function () {
+            if ($('#ddlLoc').val() > 0) {
+                $('#hfLocId').val($('#ddlLoc').val());
+                bindBlock($('#ddlLoc').val());
+            }
+            else {
+                $('#trBlk').hide();
+                $('#trPanchayat').hide();
+                $('#trVillage').hide();
+            }
+        });
+         $('#ddlBlock').change(function () {
+             if ($('#ddlBlock').val() > 0) {
+                 $('#hfLocId').val($('#ddlBlock').val());
+                bindPanchayat($('#ddlBlock').val());
+            }
+             else {
+                 $('#hfLocId').val($('#ddlLoc').val());
+                 $('#trPanchayat').hide();
+                 $('#trVillage').hide();
+            }
+         });
+         $('#ddlPanchayat').change(function () {
+             if ($('#ddlPanchayat').val() > 0) {
+                $('#hfLocId').val($('#ddlPanchayat').val());
+                bindVillage($('#ddlPanchayat').val());
+            }
+             else {
+                 $('#hfLocId').val($('#ddlBlock').val());
+                 $('#trVillage').hide();
+            }
+         });
+         $('#ddlVillage').change(function () {
+             if ($('#ddlVillage').val() > 0) {
+                $('#hfLocId').val($('#ddlVillage').val());
+            }
+             else {
+                 $('#hfLocId').val($('#ddlPanchayat').val());
+            }
+         });
+
+        function inputLimiter(e, allow) {
+    var AllowableCharacters = '';
+    if (allow == 'NameCharactersymbol') {
+        AllowableCharacters = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz./&';
+    }
+    if (allow == 'NameCharacters') {
+        AllowableCharacters = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-.\'';
+    }
+    if (allow == 'NameCharactersAndNumbers') {
+        AllowableCharacters = '1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@@-,/.\'';
+    }
+    if (allow == 'Description') {
+        AllowableCharacters = '1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-,./\&(){}[]#$:';
+    }
+    if (allow == 'Numbers') {
+        AllowableCharacters = '1234567890';
+    }
+    if (allow == 'Decimal') {
+        AllowableCharacters = '1234567890.';
+    }
+    var k;
+    k = document.all ? parseInt(e.keyCode) : parseInt(e.which);
+    if (k != 13 && k != 8 && k != 0) {
+        if ((e.ctrlKey == false) && (e.altKey == false)) {
+            return (AllowableCharacters.indexOf(String.fromCharCode(k)) != -1);
+        }
+        else {
+            return true;
+        }
+    }
+    else {
+        return true;
+    }
+        }
+
+function CheckFileType(cntr, ftype) {
+    var userImg = '@Url.Content("~/imgs/no_user.png")';
+    // Get the file upload control file extension
+    var extn = $('#' + cntr).val().split('.').pop().toLowerCase();
+    if (extn != '') {
+
+        // Create array with the files extensions to upload
+        var fileListToUpload;
+        if (parseInt(ftype) == 1)
+            fileListToUpload = new Array('pdf', 'jpg', 'jpeg');
+        else if (parseInt(ftype) == 2)
+            fileListToUpload = new Array('jpg', 'jpeg','png');
+        else
+            fileListToUpload = new Array('pdf');
+
+        //Check the file extension is in the array.
+        var isValidFile = $.inArray(extn, fileListToUpload);
+
+        // isValidFile gets the value -1 if the file extension is not in the list.
+        if (isValidFile == -1) {
+            if (parseInt(ftype) == 1) {
+                bootbox.alert('Please upload a valid document of type pdf/jpg/jpeg.!!!');
+                $('#' + cntr).replaceWith($('#' + cntr).val('').clone(true));
+                $('#' + cntr).focus();
+            }
+            else if (parseInt(ftype) == 2) {
+                alert('Please upload a valid document of type jpg/jpeg/png.!!!');
+                $('#showPhoto').attr('src', userImg);
+                $('#' + cntr).replaceWith($('#' + cntr).val('').clone(true));
+                $('#' + cntr).focus()
+            }
+            else if (parseInt(ftype) == 3) {
+                bootbox.alert("<strong>Please upload a valid file of type pdf.!!!</strong>");
+                $('#fuUploadPocPrev').text("Choose File");
+                $('#' + cntr).replaceWith($('#' + cntr).val('').clone(true));
+                $('#' + cntr).focus();
+            }
+            else {
+                bootbox.alert('Please Upload a valid document !!!');
+                $('#' + cntr).replaceWith($('#' + cntr).val('').clone(true));
+                $('label[id*="' + cntr + '"]').text('');
+                $('#' + cntr).focus();
+            }
+        }
+        else {
+            // Restrict the file size to 2MB(1024 * 5120;)
+            if ($('#' + cntr).get(0).files[0].size > (5242880)) {
+                alert("<strong>Poceeding file size should not exceed 5MB.!!!</strong>");
+                $('#fuUploadPocPrev').text("Choose File");
+                $('#' + cntr).replaceWith($('#' + cntr).val('').clone(true));
+                $('#' + cntr).focus();
+            }
+            if ($('#' + cntr).get(0).files[0].name.length > 100) {
+                alert("<strong>Poceeding file Name should be maximum 100 Characters!</strong>");
+                $('#fuUploadPocPrev').text("Choose File");
+                $('#' + cntr).replaceWith($('#' + cntr).val('').clone(true));
+                $('label[id*="' + cntr + '"]').text('');
+                $('#' + cntr).focus();
+            }
+            else
+                return true;
+        }
+    }
+    else
+        return true;
+}
+function calculate_age(birthday) { // birthday is a date
+    var ageDifMs = Date.now() - birthday.getTime();
+    var ageDate = new Date(ageDifMs); // miliseconds from epoch
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
+
+function ValidateFile(cntr, strText) {
+    var strValue = $('#' + cntr).get(0).files.length;
+    if (strValue == "0") {
+        bootbox.alert("Please upload " + strText);
+        $('#fuUploadPocPrev').text("Choose File");
+        return false;
+    }
+    else
+        return true;
+}
+$('#fuImg').on('change', function (e) {
+    var file = $('#fuImg')[0].files[0].name;
+    $('#fuUploadPocPrev').text(file);
+    if (!ValidateFile('fuImg', 'Valid Document')) {
+        return false;
+    };
+    if (!CheckFileType('fuImg', '2')) {
+        return false;
+    };
+});
+        function IsEmail(email) {
+         var regex = /^([a-zA-Z0-9_\.\-\+])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+         if(!regex.test(email)) {
+           return false;
+           }else{
+           return true;
+         }
+        }
+    </script>
+
+}
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>Add User</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Manage User</li>
+                    <li class="breadcrumb-item active" aria-current="page">Create New User</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link active" asp-controller="User" asp-action="AddUser">Add</a>
+                        <a class="nav-item nav-link" asp-controller="User" asp-action="ViewUser">View</a>
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Full Name <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <input id="txtName" type="text" class="form-control" autocomplete="off" maxlength="100" onkeypress="return inputLimiter(event,'NameCharactersymbol')" autofocus>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">User Name <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <input id="txtUName" type="text" class="form-control" maxlength="45" autocomplete="off" onkeypress="return inputLimiter(event,'NameCharactersymbol')">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Password <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <input id="txtPwd" type="password" autocomplete="off" class="form-control" maxlength="45">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> <span class="text-danger"></span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon"></span>
+                            ([Min 8 Char])(Password must contain one uppercase,lowercase char,one special char and one number)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Confirm Password <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <input id="txtConPwd" type="password" class="form-control" maxlength="45">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Location
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <select asp-items="@(new SelectList(ViewBag.ParentLoc,"INTHIERARCHYID","NVCHHIERARCHYNAME"))" id="ddlHierarchy" class="form-control">
+                                <option value="0">--Select Location--</option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="form-group row" id="trLoc">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input" id="lblDst"> <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <input type="hidden" id="hfLocId" />
+                            <select class="form-control" id="ddlLoc">
+                                <option value="0">--select--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="trBlk">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input" id="lblBlk"></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <select class="form-control" id="ddlBlock">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="trPanchayat">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input" id="lblPan"> </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <select class="form-control" id="ddlPanchayat">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="trVillage">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input" id="lblVil"> </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <select class="form-control" id="ddlVillage">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Physical Location<span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <select class="form-control" id="ddlPhyLoc" asp-items="@(new SelectList(ViewBag.PhysicalLoc, "INTLOCATIONID", "NVCHLOCATION"))">
+                                <option>--select--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-readonly-input">Date of Joining <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-default"><i class="icon-calendar1"></i></span>
+                                </div>
+                                <input type="text" id="txtDOJ" class="form-control datepicker" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Designation <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+
+                            <select class="form-control" id="ddlDesgn" asp-items="@(new SelectList(ViewBag.Designation, "INTDESIGID", "NVCHDESIGNAME"))">
+                                <option>--select--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Gender <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="rbMale" name="Gender" class="custom-control-input" checked>
+                                <label class="custom-control-label" for="rbMale">Male</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="rbFemale" name="Gender" class="custom-control-input">
+                                <label class="custom-control-label" for="rbFemale">Female</label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-readonly-input">Date of Birth <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-default"><i class="icon-calendar1"></i></span>
+                                </div>
+                                <input type="text" id="txtDOB" class="form-control datepicker" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Email <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <input id="txtEmail" type="text" class="form-control" maxlength="50" onkeypress="return inputLimiter(event,'NameCharactersAndNumbers')">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Mobile <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <input id="txtMob" type="text" class="form-control" maxlength="10" onkeypress="return inputLimiter(event,'Numbers')">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">Image<span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <span class="pull-left btn btn-default btn-file">
+                                Choose File<input type="file" id="fuImg">
+
+                            </span><span style="font-weight: bold; color: dodgerblue" id="fuUploadPocPrev"  accept="image/*">Choose File</span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> <span class="text-danger"></span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon"></span>
+                            <span class="helper-text" style="font-weight: bold; color: Green">Only jpg/jpeg/png files upto 5MB allowed.</span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> <span class="text-danger"></span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon"></span>
+                            <a href="#!" class="btn btn-primary mb-1t white-text" title="Submit" id="btnSave">Submit</a>
+                            <a href="#!" class="btn btn-danger mb-1 white-text" title="Reset" id="btnReset">Reset</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+

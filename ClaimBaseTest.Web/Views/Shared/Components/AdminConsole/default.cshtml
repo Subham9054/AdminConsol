@@ -1,0 +1,82 @@
+﻿@model IEnumerable<CodeGen.Model.User.LinkAccess>
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    foreach (var link in Model.Select(x => new { x.nvchglinkname, x.vchiconclass, x.intglinkid, x.Aglinkid, x.Aplinkid }).Distinct().ToList())
+    {
+        <input type="hidden" id="hdnid" value="@link.Aglinkid" />
+        var liclass = ""; var divclass = ""; int Gid = 0;
+        if (link.Aglinkid == 0)
+        {
+            //if (TempData["glink"] != null)
+            //{
+            //    Gid = Convert.ToInt32(TempData["Glink"].ToString());
+            //}
+        }
+        else
+        {
+            Gid = link.Aglinkid;
+        }
+        if (link.intglinkid == Gid)
+        {
+            //count = 1;
+            liclass = "nav-item dropdown glmaster" + link.intglinkid + "&nbsp; show";
+            divclass = "dropdown-menu " + link.intglinkid + " show";
+            //divclass = "dropdown-menu " + link.intglinkid;
+
+        }
+        else
+        {
+
+            //liclass = "nav-item dropdown " + link.intglinkid + " show";
+            //divclass = "dropdown-menu " + link.intglinkid + " show";
+            liclass = "nav-item dropdown glmaster" + link.intglinkid;
+            divclass = "dropdown-menu " + link.intglinkid;
+        }
+
+        <li class="@liclass" id="primarylink">
+            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-user"></i>
+                @*<i class="@link.vchiconclass"></i>*@
+                <span>@link.nvchglinkname</span>
+            </a>
+            <div class="@divclass" aria-labelledby="navbarDropdownMenuLink">
+                @foreach (var primarylist in Model.Where(w => w.nvchglinkname == link.nvchglinkname).Select((x, i) => new { Data = x, Index = i + 1 }))
+                {
+                    var ancclass = ""; int Pid = 0; divclass = "";
+                    if (link.Aglinkid == 0)
+                    {
+                        //if (TempData["Plink"] != null)
+                        //{
+                        //    Pid = Convert.ToInt32(TempData["Plink"].ToString());
+                        //}
+                    }
+                    else
+                    { Pid = link.Aplinkid; }
+                    if (primarylist.Data.intplinkid == Pid)
+                    {
+                        //<input type="hidden" id="pid" value="@Pid" />
+                        ancclass = "dropdown-item " + primarylist.Data.intplinkid + " active";
+                        //divclass= "dropdown-menu " + link.intglinkid + " show";
+                        //ancclass = "dropdown-item " + primarylist.Data.intplinkid;
+                    }
+                    else
+                    {
+                        ancclass = "dropdown-item " + primarylist.Data.intplinkid;
+                    }
+                    var data = primarylist.Data.nvchplinkname.Split(" ");
+                    // var first = "<i class='fa fa-long-arrow-right' aria-hidden='true'></i>";
+                    //if (data.Length > 1)
+                    //{
+                    //    first = data[0].Substring(0, 1) + data[1].Substring(0, 1);
+                  //  primarylist.Data.btnid = Convert.ToInt32(ViewBag.Btnid);
+                    <a href="/@primarylist.Data.vchfilename?Glink=@primarylist.Data.intglinkid&Plink=@primarylist.Data.intplinkid" class=" @ancclass"> <span class="submenu"></span> @primarylist.Data.nvchplinkname </a>
+                }
+            </div>
+        </li>
+        //count = count + 1;
+    }
+
+}
+

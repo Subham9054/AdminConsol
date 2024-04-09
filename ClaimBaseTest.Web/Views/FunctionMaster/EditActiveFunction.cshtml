@@ -1,0 +1,250 @@
+﻿@model CodeGen.Model.FunctionMasterModel.FunctionMasterModel
+
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Title = "EditActiveFunction";
+
+}
+
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>Edit Function Master</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Manage Master</li>
+                    <li class="breadcrumb-item active" aria-current="page">Function Master</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link active" asp-controller="FunctionMaster" asp-action="AddFunctionMaster">Add</a>
+                        <a class="nav-item nav-link" asp-controller="FunctionMaster" asp-action="ViewFunctionMasterActive">Active</a>
+                        <a class="nav-item nav-link" asp-controller="FunctionMaster" asp-action="ViewFunctionMasterInActive">InActive</a>
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+
+
+
+                @using (Html.BeginForm())
+                {
+                    @Html.ValidationSummary(true)
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Function Name <span class="text-danger">*</span></label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                @Html.TextBoxFor(model => model.FunctionName, new { @class = "form-control", maxlength = 150, autofocus = "true", Onkeypress = "return inputLimiter(event,'NameCharactersymbol')" })
+                                @Html.ValidationMessageFor(model => model.FunctionName)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> File Name <span class="text-danger">*</span></label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                @Html.TextBoxFor(model => model.FileName, new { @class = "form-control", maxlength = 150, Onkeypress = "return inputLimiter(event,'Filename')" })
+                                @Html.ValidationMessageFor(model => model.FileName)
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Description <span class="text-danger">*</span></label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                @Html.TextArea("Description", (string)ViewData["Description"], new { @class = "form-control", maxlength = 98, Onkeypress = "return inputLimiter(event,'Description')" })
+                                @Html.ValidationMessageFor(model => model.Description)<span class="mandatory">*</span>
+                                Maximum <span class="mandatory" id="SpanLbl">
+                                    @ViewData["DescriptionLen"]
+                                </span>Character Allowed
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Permission <span class="text-danger">*</span></label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                @Html.CheckBox("CheckBoxAdd", (bool)ViewData["FAdd"])<span> Add </span>
+                                @Html.CheckBox("CheckBoxView", (bool)ViewData["FView"])<span> View </span>
+                                @Html.CheckBox("CheckBoxManage", (bool)ViewData["FManage"])<span> Manage </span>
+
+                            </div>
+                        </div>
+                        <div class="form-group row" style="display:none">
+                            <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">External Mail Required <span class="text-danger">*</span></label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                @Html.RadioButtonFor(model => model.MailR, "1") Yes @Html.RadioButtonFor(model => model.MailR, "0")
+                                No <span class="mandatory">@Html.ValidationMessageFor(model => model.MailR)</span>
+
+                            </div>
+                        </div>
+                        <div class="form-group row" style="display:none">
+                            <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Freebees <span class="text-danger">*</span></label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                @Html.RadioButtonFor(model => model.FreeBees, "1") Yes
+                                @Html.RadioButtonFor(model => model.FreeBees, "0")
+                                No <span class="mandatory">@Html.ValidationMessageFor(model => model.FreeBees)</span>
+                            </div>
+                        </div>
+                        <div class="form-group row" style="display:none">
+                            <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Portlet File Name <span class="text-danger">*</span></label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                @Html.TextBoxFor(model => model.PortletFile, new { @class = "form-control", maxlength = 150, Onkeypress = "return inputLimiter(event,'Filename')" })
+                                @Html.ValidationMessageFor(model => model.PortletFile)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"></label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon"></span>
+                                <input type="submit" value="Update" class="btn btn-success btn-sm" id="btn1" name="Command" />
+                                <input type="submit" value="Cancel" class="btn btn-success btn-danger" id="btn2" />
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+
+    <script type="text/javascript" src="@Url.Content("~/admjs/validator.js")"></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+
+            window.history.forward();  //Disable back button after logout
+            $('#CheckBoxAdd').prop('checked')
+
+            $('#Description').keyup(function () {
+                var left = 500 - $(this).val().length;
+                if (left < 0) {
+                    left = 0;
+                }
+                $('#SpanLbl').text(left);
+            });
+
+            $("#btn2").click(function (event) {
+                event.preventDefault();
+                var url = '@Url.Action("ViewFunctionMasterActive", "FunctionMaster")';
+                window.location.href = url;
+            });
+        });
+    </script>
+    <script type="text/javascript" language="javascript">
+        $(function () {
+
+            $("#btn1").click(function () {
+                if (!blankFieldValidation('FunctionName', 'Function Name')) {
+                    return false;
+                }
+                if (!WhiteSpaceValidation1st('FunctionName', 'Function Name')) {
+                    return false;
+                }
+                if (!blankFieldValidation('FileName', 'File Name')) {
+                    return false;
+                }
+                if (!WhiteSpaceValidation1st('FileName', 'File Name')) {
+                    return false;
+                }
+                if (!blankFieldValidation('Description', 'Description')) {
+                    return false;
+                }
+                if (!WhiteSpaceValidation1st('Description', 'Description')) {
+                    return false;
+                }
+                if ((document.getElementById('CheckBoxAdd').checked == false) && (document.getElementById('CheckBoxView').checked == false) && (document.getElementById('CheckBoxManage').checked == false)) {
+                    alert('Please choose Permission');
+                    $("#Add").focus();
+                    return false;
+                }
+                //                if (!WhiteSpaceValidation1st('PortletName', 'Portlet Name')) {
+                //                    return false;
+                //                }
+                //                if (!blankFieldValidation('PortletName', 'Portlet Name')) {
+                //                    return false;
+                //                }
+                if (confirm("Are you sure you want to Update this?")) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        function inputLimiter(e, allow) {
+            var AllowableCharacters = '';
+
+            if (allow == 'NameCharactersymbol') {
+                AllowableCharacters = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz./&';
+            }
+            if (allow == 'NameCharacters') {
+                AllowableCharacters = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-.\'';
+            }
+            if (allow == 'NameCharactersAndNumbers') {
+                AllowableCharacters = '1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-,/.\'';
+            }
+            if (allow == 'Description') {
+                AllowableCharacters = '1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-.,()/';
+            }
+            if (allow == 'Numbers') {
+                AllowableCharacters = '1234567890';
+            }
+            if (allow == 'Decimal') {
+                AllowableCharacters = '1234567890.';
+            }
+            if (allow == 'Filename') {
+                AllowableCharacters = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/';
+            }
+            var k;
+            k = document.all ? parseInt(e.keyCode) : parseInt(e.which);
+            if (k != 13 && k != 8 && k != 0) {
+                if ((e.ctrlKey == false) && (e.altKey == false)) {
+                    return (AllowableCharacters.indexOf(String.fromCharCode(k)) != -1);
+                }
+                else {
+                    return true;
+                }
+            }
+            else {
+                return true;
+            }
+        }
+    </script>
+
+
+}
+
+@{
+    if (ViewData["result"] != null)
+    {
+        ViewData["result"] = null;
+        <script type="text/javascript" language="javascript">
+            alert("Function updated Successfully");
+        </script>
+    }
+
+}
+@{
+    if (ViewData["result1"] != null)
+    {
+        ViewData["result1"] = null;
+        <script type="text/javascript" language="javascript">
+            alert("Function already exists");
+        </script>
+    }
+
+}

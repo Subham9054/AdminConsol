@@ -1,0 +1,23 @@
+[
+  {
+    "PageName": "City",
+    "ModuleName": "CityMaster",
+    "StoreProcedureName": "USP_City_Copy_2",
+    "Actions": "I/V",
+    "PageType": "City/ViewCity"
+  },
+  {
+    "PageName": "Company",
+    "ModuleName": "CompanyMaster",
+    "StoreProcedureName": "USP_Company_Copy_3",
+    "Actions": "I/V",
+    "PageType": "Company/ViewCompany"
+  },
+  {
+    "PageName": "Employee",
+    "ModuleName": "EmpMaster",
+    "StoreProcedureName": "USP_Employee_Copy_2",
+    "Actions": "I/V",
+    "PageType": "Employee/ViewEmployee"
+  }
+]

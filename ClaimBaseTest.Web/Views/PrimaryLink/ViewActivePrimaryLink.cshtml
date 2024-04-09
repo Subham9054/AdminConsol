@@ -1,0 +1,415 @@
+﻿@model CodeGen.Model.PrimaryLink.PrimaryModel
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+
+    ViewData["Title"] = "Active Global Link";
+}
+
+@section Scripts {
+   
+    <script>
+        $(document).ready(function () {
+            $('#example1').DataTable();
+        });
+    </script>
+    <script>
+        function check_uncheck_checkbox(isChecked) {
+            if (isChecked) {
+                $('input[name="chkbox"]').each(function () {
+                    this.checked = true;
+                });
+            }
+            else {
+                $('input[name="chkbox"]').each(function () {
+                    this.checked = false;
+                });
+            }
+        }
+        function ClearField() {
+            $('input[type=checkbox]').prop('checked', false);
+        }
+          function BindGlobalLink() {
+            var ProjectId = $('#ddlProjectLink').val();
+            var data = {
+                projId: ProjectId
+
+            };
+
+            $.ajax({
+                type: 'GET',
+                  url: '@Url.Content("~/PrimaryLink/BindGlobalLinkByProjectId")',
+                data: data,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (response.length == 0) {
+                     
+                    } else
+                    {
+                    console.log(response);
+                    $("#ddlsearchGlobalLink").empty();
+                    $("#ddlsearchGlobalLink").append($('<option value="0">--Select Global Link--</option>'));
+                    if (response.length > 0) {
+                        for (var i = 0; i < response.length; i++) {
+                            $("#ddlsearchGlobalLink").append($('<option/>')
+                                .val(response[i].intGLinkID)
+                                .html(response[i].nvchGLinkName)
+                            );
+                        }
+                        
+                    }
+
+                    }
+                   
+
+
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+            return true;
+
+
+        }
+    </script>
+    <script type="text/javascript" language="javascript">
+        function validateSearchForm() {
+                if ($("#ddlProjectLink").val() == 0) {
+                $("#ddlProjectLink").focus();
+                alert("Please Select Project Link Name.");
+
+                return false;
+            }
+            else if ($("#ddlsearchGlobalLink").val() == 0) {
+                $("#ddlsearchGlobalLink").focus();
+                alert("Please Select Global Link.");
+                return false;
+            }
+          
+        }
+        function validateForm() {
+            if ($('#example1 :checked').length == 0) {
+                alert("No record selected for Inactive!");
+                return false;
+            }
+            else {
+                return confirm('Are you sure you want to Mark As In-Active?');
+            }
+        }
+          @*-------------------------------------------------Modify s--------------------------------------------*@
+          $("#Modify").click( function (e) {
+              //  debugger;
+             // alert(1);
+              var len = $("#example1 tr").length;
+                //alert(len);
+                var strSelecteds = '';
+                var rows = $("#example1 tr");
+
+                for (var i = 0; i < rows.length; i++) {
+                    var row = $(rows).eq(i);
+                    var cb = row.find('input.cboxDELclass');
+                    var checked = (cb.is(':checked'));
+                    var pkno = cb.val();
+                    var txtSLNO = row.find('input#SLNO');
+                    var NewSLNO = txtSLNO.val();
+                    if (checked) {
+                        strSelecteds = strSelecteds + pkno + '|' + NewSLNO + '|' + $('#ddlsearchGlobalLink').val() + '^';
+                    }
+                } //
+
+
+
+              if (strSelecteds.length > 0) {
+                    strSelecteds = strSelecteds.substring(0, strSelecteds.length - 1);
+
+              }
+               var datastring = {
+                slnomodifyList: strSelecteds,
+            };
+
+
+              //console.log(strSelecteds);
+              if (strSelecteds.length > 0) {
+
+
+                    if (confirm("Are you sure want to modify Sl no?")) {
+                          $.ajax({
+                            type: "post",
+                            url: '@Url.Content("~/PrimaryLink/SlnoModifyData")',
+                           // url: '/PrimaryLink/SlnoModifyData',
+                            data: JSON.stringify(datastring),
+                            datatype: "json",
+                            contentType: 'application/json',
+                            traditional: true,
+                              success: function (data) {
+                                  //debugger;
+                                  alert(data.response);
+                                  //var s = data.id;
+                                 // alert(s);
+
+                             var newUrl ="@Url.Action("ViewActivePrimaryLink", "PrimaryLink")";
+                                    window.location.href = newUrl+"/"+data.id;;
+                            //window.location.href = "/PrimaryLink/ViewActivePrimaryLink/"+data.id;
+                           // window.location.href = "/PrimaryLink/ViewActivePrimaryLink/"+data.id;
+
+                            }
+                        });
+                       // alert('Sl no modify Successfully')
+
+                    }
+                    else {
+
+                        return false;
+                    }
+
+                }
+                else {
+                    alert('No record selected for Sl no modify!');
+
+                }
+
+            });
+
+
+    </script>
+
+}
+@{
+    if (TempData["CommandStatus"] != null)
+    {
+        <script type="text/javascript">
+            alert('@(TempData["CommandStatus"])');
+             TempData["CommandStatus"] = null;
+        </script>
+    }
+
+}
+
+
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>Active Primary Link</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Primary Link</li>
+                    <li class="breadcrumb-item active" aria-current="page">Active Primary Link</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link" asp-controller="PrimaryLink" asp-action="AddPrimaryLink">Add</a>
+                        <a class="nav-item nav-link active" asp-controller="PrimaryLink" asp-action="ViewActivePrimaryLink">Active</a>
+                        <a class="nav-item nav-link" asp-controller="PrimaryLink" asp-action="ViewInActivePrimaryLink">InActive</a>
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+           
+         
+                <div class="card-body">
+                    <div class="form-group">
+                        <form id="frmsearchPrimaryLink" data-parsley-validate novalidate method="post" asp-action="SearchPrimaryLink" asp-controller="PrimaryLink" asp-area="" asp-antiforgery="true" onsubmit="return validateSearchForm()">
+                            <div class="form-group row">
+                                <label class="col-12 col-md-2 col-xl-2 control-label">
+                                    Project Link Name
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <span class="colon">:</span>
+                                    <select asp-for="INTPROJECTLINKID" asp-items="@(new SelectList(Model.ViewProjectLinkList,"INTPROJECTLINKID","NVCHPROJECTLINKNAME"))" id="ddlProjectLink" onchange=" return BindGlobalLink();" class="form-control" autofocus>
+                                        <option value="0">--Select Project Link--</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-12 col-md-2 col-xl-2 control-label">
+                                    Global Link Name
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <span class="colon">:</span>
+                                    <select asp-for="GlinkId" asp-items="@(new SelectList(Model.GlobalList,"intGLinkID","nvchGLinkName"))" id="ddlsearchGlobalLink" class="form-control">
+                                        <option value="0">--Select Global Link--</option>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> <span class="text-danger"></span></label>
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <button type="submit" name="submit" id="btnSearch" class="btn btn-primary btn-sm" value="Submit">Search</button>
+                                </div>
+
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            
+            <div class="card-body">
+                @if (Model.PrimaryLinkList != null)
+                {
+
+                    @if (Model.PrimaryLinkList.Count != 0)
+                    {
+                        <form id="frmCreatePrimaryLink" data-parsley-validate novalidate method="post" asp-action="MarkAsInactive" asp-controller="PrimaryLink" asp-area="" asp-antiforgery="true" onsubmit="return validateForm()">
+                            <div class="table-responsive">
+                                <table data-toggle="table" class="table table-hover table-bordered table-padding" id="example1">
+
+                                    <thead>
+                                        <tr>
+                                            <th width="10px"><input type="checkbox" id="checkBoxAll" onclick="check_uncheck_checkbox(this.checked)" /></th>
+                                            <th width="10px">SL#</th>
+                                            <th width="10px">Primary Serial #</th>
+                                            <th width="100px">Project Link Name</th>
+                                            <th width="100px">Global Link Name</th>
+                                            <th width="100px">Function Name</th>
+                                            <th width="100px">Primary Link Name</th>
+                                            <th width="10px">Edit</th>
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.PrimaryLinkList.Count != 0)
+                                        {
+                                        @foreach (var primarylink in Model.PrimaryLinkList.Select((x, i) => new { Data = x, Index = i + 1 }))
+                                            {
+
+                                        <tr>
+                                            <td><input class="cboxDELclass" id="cboxDELclass" type="checkbox" name="chkbox" value="@primarylink.Data.INTPLINKID" /></td>
+                                            <td>@primarylink.Index</td>
+                                            <td>
+                                                <input type="text" class="form-control" id="SLNO" value="@primarylink.Data.INTSLNO" Onkeypress="return inputLimiter(event,'Numbers')" placeholder="Enter Serial no" autocomplete="off" maxlength="3" />
+                                            </td>
+                                            <td>@Html.DisplayFor(modelItem => primarylink.Data.NVCHPROJECTLINKNAME)</td>
+                                            <td>@Html.DisplayFor(modelItem => primarylink.Data.NVCHGLINKNAME)</td>
+                                            <td>@Html.DisplayFor(modelItem => primarylink.Data.VCHFUNCTION)</td>
+                                            <td>@Html.DisplayFor(modelItem => primarylink.Data.NVCHPLINKNAME)</td>
+                                            <td>
+                                                <a class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Edit" asp-controller="PrimaryLink"
+                                                   asp-action="EditActivePrimaryLink" asp-route-id="@primarylink.Data.INTPLINKID">
+                                                    <i class="icon-edit1"></i>
+                                                </a>
+
+                                            </td>
+                                        </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                        <tr style="text-align: center;font-size: x-large;font-weight: bolder;">
+                                            <td colspan='6' align='center'> No records found!</td>
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                <input asp-for="UpdatedBy" type="hidden" id="hdnGLinkID" value="1" />
+
+                                <button type="submit" name="submitButton" class="btn btn-primary btn-sm" title="Mark AS Inactive" value="submit">Mark AS Inactive</button>
+                               
+                            </div>
+                        </form>
+                        <div class="form-group row"></div>
+                        <div class="form-group">
+
+
+                            <input type="submit" id="Modify" class="btn btn-success btn-sm" value="Modify Primary Serial #" />
+                            <button type="button" class="btn btn-danger" title="Reset"  onclick="return ClearField();"><span class="localize" data-key="Reset">Reset</span></button>
+                        </div>
+                        <div style="float: right;">
+                            @{
+                                if (TempData["CommandStatus_S"] != null)
+                                {
+                                    TempData["CommandStatus_S"] = null;
+                                    <script type="text/javascript" language="javascript">
+                                        alert("Record Saved Successfully");
+                                    </script>
+                                }
+
+                            }
+                            @{
+                                if (TempData["CommandStatus_A"] != null)
+                                {
+                                    TempData["CommandStatus_A"] = null;
+                                    <script type="text/javascript" language="javascript">
+                                        alert("Record Already Exist");
+                                    </script>
+                                }
+
+                            }
+                            @{
+                                if (TempData["CommandStatus_U"] != null)
+                                {
+                                    TempData["CommandStatus_U"] = null;
+                                    <script type="text/javascript" language="javascript">
+                                        alert("Record Updated Successfully");
+                                    </script>
+                                }
+
+                            }
+                            @{
+                                if (TempData["CommandStatus_AC"] != null)
+                                {
+                                    TempData["CommandStatus_AC"] = null;
+                                    <script type="text/javascript" language="javascript">
+                                        alert("Record Marked As Active Successfully");
+                                    </script>
+                                }
+
+                            }
+                            @*@{
+                                if (TempData["CommandStatus_INA"] != null)
+                                {
+                                    TempData["CommandStatus_INA"] = null;
+                                    <script type="text/javascript" language="javascript">
+                                        alert("Record Mark As InActive Successfully");
+                                    </script>
+                                }
+
+                            }*@
+                            @{
+                                if (TempData["CommandStatus_AU"] != null)
+                                {
+                                    TempData["CommandStatus_AU"] = null;
+                                    <script type="text/javascript" language="javascript">
+                                        alert("Record Already in Use");
+                                    </script>
+                                }
+
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <h4>Record Not Found</h4>
+                    }
+                }
+
+
+
+
+            </div>
+
+             </div>
+
+
+
+        </div>
+
+    </div>
+</div>
+
+

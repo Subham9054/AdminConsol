@@ -1,0 +1,332 @@
+﻿@*@model CodeGen.Model.User.ButtonTab*@
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Title = "ViewTabMaster";
+    var ResultData = ViewBag.TabData as List<CodeGen.Model.User.ButtonTab>;
+    //var ViewTabMaxSortNo = ViewBag.ViewTabMaxSortNo;
+}
+
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>View Tab Link</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Menue Manage</li>
+                    <li class="breadcrumb-item active" aria-current="page">View Tab Link</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link active" asp-controller="MenueManage" asp-action="AddTabMaster">Add</a>
+                        <a class="nav-item nav-link" asp-controller="MenueManage" asp-action="ViewTabMaster">View</a>
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+                <div class="card-body">
+
+                    <form id="frmCreatePrimaryLink" data-parsley-validate novalidate method="post" asp-action="ViewTabMaster"
+                          asp-controller="MenueManage" asp-area="" asp-antiforgery="true">
+                        <div class="table-responsive">
+                            @if (ResultData != null && ResultData.ToList().Count > 0)
+                            {
+                                <table data-toggle="table" class="table table-hover table-bordered table-padding" id="example1">
+                                    <thead>
+                                        @*TABID	TABNAME	BUTTONID	BUTTONNAME	INTFUNCTIONID	VCHFUNCTION	OPENINNEWWINDOW	BITSTATUS*@
+
+                                        <tr>
+                                            <th width="10px"><input type="checkbox" id="checkBoxAll" onclick="check_uncheck_checkbox(this.checked)" /></th>
+                                            @*<th width="10px">SL#</th>*@
+                                            <th width="1px">Tab Serial #</th>
+                                            <th width="100px">Tab Name</th>
+                                            <th width="100px">Button Name</th>
+                                            <th width="100px">Function Name</th>
+                                            <th width="100px">Open In NewWindow</th>
+                                            <th width="20px">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int count = 1;
+                                        }
+                                        @foreach (var list in ResultData)
+                                        {
+                                            <tr>
+                                                @*<td class="text-center">@count</td>*@
+                                                <td>
+                                                    <input class="cboxDELclass form-check-input" id="cboxDELclass" type="checkbox" name="chkbox" value="@list.TABID" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" id="SLNO" value="@list.INTSORTNUM" Onkeypress="return inputLimiter(event,'Numbers')" placeholder="Enter Serial no" autocomplete="off" maxlength="3" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    @list.TABNAME
+                                                </td>
+                                                <td>
+                                                    @list.BUTTONNAME
+                                                </td>
+                                                <td>
+                                                    @list.VCHFUNCTION
+                                                </td>
+                                                <td>
+                                                    @list.OPENINNEWWINDOW
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-info btn-sm"
+                                                       href='@Url.Action("AddTabMaster", "MenueManage", new { tabid = list.TABID,intsortnum=list.INTSORTNUM })'
+                                                       data-toggle="tooltip" data-original-title="Edit">
+                                                        <i class="icon-edit1"></i><b>Edit</b>
+                                                    </a>
+                                                    <a class="text-danger" href='@Url.Action("ViewTabMaster", "MenueManage", new { tabidDel = list.TABID })' data-toggle="tooltip" title="" data-original-title="Delete"><i class="icon-trash-21"></i><b>Delete</b></a>
+                                                </td>
+                                            </tr>
+                                            count++;
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+
+                            @*<input type="hidden" id="hdnGLinkID" value="1" />*@
+                            <button type="button" name="submitButton" class="btn btn-primary btn-sm" title="Mark AS Inactive" value="submit">Mark AS Inactive</button>
+                            <div class="mt-2">
+                                <input type="button" id="Modify" class="btn btn-success btn-sm" title="Modify" value="Modify Global Serial #" />
+                                <button type="button" class="btn btn-danger" title="Reset" onclick="return ClearField();"><span class="localize" data-key="Reset">Reset</span></button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="form-group row"></div>
+                    <div style="float: right;">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#example1').DataTable();
+
+
+            function getUrlVars() {
+                var vars = {};
+                var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                    vars[key] = decodeURIComponent(value);
+                });
+                return vars;
+            }
+            var idDel = getUrlVars()["tabidDel"];
+
+            if (idDel != undefined || idDel != null) {
+                DeleteTabMaster(idDel);
+            }
+
+
+        });
+    </script>
+    <script>
+
+        function check_uncheck_checkbox(isChecked) {
+            if (isChecked) {
+                $('input[name="chkbox"]').each(function () {
+                    this.checked = true;
+                });
+            }
+            else {
+                $('input[name="chkbox"]').each(function () {
+                    this.checked = false;
+                });
+            }
+        }
+
+        function ClearField() {
+            //$('input[type=checkbox]').prop('checked', false);
+        }
+
+        function inputLimiter(e, allow) {
+            var AllowableCharacters = '';
+
+            if (allow == 'NameCharactersymbol') {
+                AllowableCharacters = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz./&';
+            }
+            if (allow == 'NameCharacters') {
+                AllowableCharacters = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-.\'';
+            }
+            if (allow == 'Email') {
+                AllowableCharacters = '1234567890@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_.';
+            }
+            if (allow == 'Description') {
+                AllowableCharacters = '1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-.,()/';
+            }
+            if (allow == 'NameCharactersAndNumbers') {
+                AllowableCharacters = '1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-,/.\'';
+            }
+            if (allow == 'Numbers') {
+                AllowableCharacters = '1234567890';
+            }
+            if (allow == 'Decimal') {
+                AllowableCharacters = '1234567890.';
+            }
+            if (allow == 'Filename') {
+                AllowableCharacters = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/';
+            }
+            var k;
+            k = document.all ? parseInt(e.keyCode) : parseInt(e.which);
+            if (k != 13 && k != 8 && k != 0) {
+                if ((e.ctrlKey == false) && (e.altKey == false)) {
+                    return (AllowableCharacters.indexOf(String.fromCharCode(k)) != -1);
+                }
+                else {
+                    return true;
+                }
+            }
+            else {
+                return true;
+            }
+        }
+
+
+
+
+
+
+        function DeleteTabMaster(idDel) {
+            $.ajax({
+                    type: 'DELETE',
+                    url: '@Url.Action("DeleteTabMaster", "MenueManage")',
+                    data: {
+                        "TABID": idDel,
+                    },
+                    dataType: 'JSON',
+                    success: function (data) {
+                        if (JSON.parse(data) == 3) {
+                            alert("Tab Deleted Successfully.");
+                            window.location.href = "@Url.Action("ViewTabMaster", "MenueManage")";
+                        }
+                    }
+                });
+        }
+
+    </script>
+}
+<script>
+    $("#Modify").click( function (e) {
+
+              var len = $("#example1 tr").length;
+                var strSelecteds = '';
+                var rows = $("#example1 tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                    var row = $(rows).eq(i);
+                    var cb = row.find('input.cboxDELclass');
+                    var checked = (cb.is(':checked'));
+                    var pkno = cb.val();
+                    //alert(pkno);
+                    var txtSLNO = row.find('input#SLNO');
+                    var NewSLNO = txtSLNO.val();
+                if (checked) {
+                    strSelecteds = strSelecteds + pkno + '|' + NewSLNO + '^';
+                    }
+                } //
+
+
+
+              if (strSelecteds.length > 0) {
+                    strSelecteds = strSelecteds.substring(0, strSelecteds.length - 1);
+
+              }
+               var datastring = {
+                slnomodifyList: strSelecteds,
+            };
+
+
+              //console.log(strSelecteds);
+                if (strSelecteds.length > 0) {
+                    debugger;
+                    if (confirm("Are you sure want to modify Sl no?")) {
+                          $.ajax({
+                            type: "post",
+                            url: '@Url.Content("~/MenueManage/SlnoModifyData")',
+                           // url: '/GlobalLink/SlnoModifyData',
+                            data: JSON.stringify(datastring),
+                            datatype: "json",
+                            contentType: 'application/json',
+                            traditional: true,
+                              success: function (data) {
+                                  debugger;
+                            alert(data);
+                                 var newUrl ="@Url.Action("ViewTabMaster", "MenueManage")";
+                                  window.location.href = newUrl;
+                                 // window.location.href = "/ViewTabMaster";
+
+                                  //window.location.href = "ViewTabMaster";
+                                  //location.reload();
+                                  //window.location.replace("MenueManage/ViewTabMaster");
+                                  // After successful processing
+                               // return Redirect("MenueManage/ViewTabMaster");
+                                  //window.location.assign("MenueManage/ViewTabMaster");
+
+                            }
+                        });
+                       // alert('Sl no modify Successfully')
+
+                    }
+                    else {
+
+                        return false;
+                    }
+
+                }
+                else {
+                    alert('No record selected for Sl no modify!');
+
+                }
+
+        });
+        @*$(document).ready(function () {
+
+             //$('#example1').DataTable();
+            function getUrlVars() {
+                var vars = {};
+                var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                    vars[key] = decodeURIComponent(value);
+                });
+                return vars;
+            }
+            var idDel = getUrlVars()["tabidDel"];
+
+            if (idDel != undefined || idDel != null) {
+                DeleteTabMaster(idDel);
+            }
+        });
+
+        function DeleteTabMaster(idDel) {
+            $.ajax({
+                    type: 'DELETE',
+                    url: '@Url.Action("DeleteTabMaster", "MenueManage")',
+                    data: {
+                        "TABID": idDel,
+                    },
+                    dataType: 'JSON',
+                    success: function (data) {
+                        if (JSON.parse(data) == 3) {
+                            alert("Tab Deleted Successfully.");
+                            window.location.href = "@Url.Action("ViewTabMaster", "MenueManage")";
+                        }
+                    }
+                });
+        }*@
+
+</script>

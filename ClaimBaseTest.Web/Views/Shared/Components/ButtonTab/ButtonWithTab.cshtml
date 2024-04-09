@@ -1,0 +1,70 @@
+﻿@model IEnumerable<CodeGen.Model.User.ButtonTab1>
+@using Microsoft.AspNetCore.Http
+
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var listData = ViewBag.BtnTab as IList<CodeGen.Model.User.ButtonTab1>;
+}
+@{
+    HashSet<int> printedButtonIds = new HashSet<int>(); // HashSet to keep track of printed button IDs
+}
+
+<div class="d-flex gap-1 justify-content-end" id="buttonContainer">
+    @{
+        var clickedBtnId = ViewBag.ClickBtnId;
+        foreach (var link in Model.Select(x => new { x.BUTTONID, x.BUTTONNAME, x.VCHFILENAME, x.INTPLINKID }).Distinct().ToList())
+        {
+            if (listData != null)
+            {
+                if (!printedButtonIds.Contains(link.BUTTONID))
+                {
+                    printedButtonIds.Add(link.BUTTONID);
+
+                    string cssClass1 = "btn btn-outline-primary";
+
+                    if (clickedBtnId == "")
+                    {
+                        if ((link.BUTTONID).ToString() == ViewBag.Btnid)
+                        {
+                            cssClass1 = "btn btn-outline-primary active";
+                        }
+                    }
+                    else if (link.BUTTONID.ToString() == clickedBtnId?.ToString())
+                    {
+                        cssClass1 = "btn btn-outline-primary active";
+                    }
+                    <a class="@cssClass1" onclick="" href="/@link.VCHFILENAME?Plink=@link.INTPLINKID&Buttonid=@link.BUTTONID">@link.BUTTONNAME</a>
+                }
+            }
+        }
+    }
+</div>
+
+
+@{
+    var clickedTabId = ViewBag.ClickTabId;
+    foreach (var link in Model.Select(x => new { x.TABID, x.TABNAME, x.VCHFILENAME, x.INTPLINKID, x.BUTTONID }).Distinct().ToList())
+
+        if (listData != null && link.TABNAME != null)
+        {
+            string cssClass = "nav-link";
+            if (clickedTabId == "")
+            {
+                if (link.TABID.ToString() == ViewBag.Tabid)
+                {
+                    cssClass = "nav-link active";
+                }
+
+            }
+            else if (link.TABID.ToString() == clickedTabId?.ToString())
+            {
+                cssClass = "nav-link active";
+            }
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="@cssClass" href="/@link.VCHFILENAME?Plink=@link.INTPLINKID&Tabid=@link.TABID&Buttonid=@link.BUTTONID">@link.TABNAME</a>
+                </li>
+            </ul>
+        }
+}
+

@@ -1,0 +1,115 @@
+﻿
+@model CodeGen.Model.DesignationMasterModel.DesignationMasterModel
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["Title"] = "View InActive Designation";
+}
+
+@section Scripts {
+
+    
+    <script src="~/js/AdminConsole/DesignationMaster.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#example1').DataTable();
+        });
+    </script>
+
+}
+
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>InActive Designation Master</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Designation  Master</li>
+                    <li class="breadcrumb-item active" aria-current="page">InActive Designation  Master</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link" asp-controller="DesignationMaster" asp-action="AddDesignationMaster">Add</a>
+                        <a class="nav-item nav-link" asp-controller="DesignationMaster" asp-action="ViewActiveDesignation">Active</a>
+                        <a class="nav-item nav-link active" asp-controller="DesignationMaster" asp-action="ViewInActiveDesignation">InActive</a>
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    @if (Model.DesignationMasterList.Count != 0)
+                    {
+                        <form id="frmMarkInactive" data-parsley-validate novalidate method="post" asp-action="MarkAsActive"
+                              asp-controller="DesignationMaster" asp-area="" asp-antiforgery="true" onsubmit="return validateInactiveForm()">
+                            <div class="table-responsive">
+                                <table data-toggle="table" class="table table-hover table-bordered table-padding" id="example1">
+
+                                    <thead>
+                                        <tr>
+                                            <th width="10px"><input type="checkbox" id="checkBoxAll" onclick="check_uncheck_checkbox_Inactive(this.checked)" /></th>
+                                            <th width="10px">SL#</th>
+                                            <th width="100px">Name</th>
+                                            <th width="20px">Alias Name</th>
+
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.DesignationMasterList.Count != 0)
+                                        {
+                                            @foreach (var Designation in Model.DesignationMasterList.Select((x, i) => new { Data = x, Index = i + 1 }))
+                                            {
+
+                                                <tr>
+                                                    <td><input type="checkbox" name="chkbox" value="@Designation.Data.INTDESIGID" /></td>
+                                                    <td>@Designation.Index</td>
+                                                    <td>@Html.DisplayFor(modelItem => Designation.Data.NVCHDESIGNAME)</td>
+                                                    <td>@Html.DisplayFor(modelItem => Designation.Data.NVCHALIASNAME)</td>
+                                                    @*<td>@Html.DisplayFor(modelItem => Designation.Data.INTNOLEVEL)</td>*@
+
+
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr style="text-align: center;font-size: x-large;font-weight: bolder;">
+                                                <td colspan='6' align='center'> No records found!</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                                <button type="submit" name="submitButton" class="btn btn-primary mb-1t white-text" title="Mark AS Active" value="submit">Mark AS Active</button>
+                                <button type="button" value="Reset" class="btn btn-danger" title="Reset" onclick="return chkClearField_Inactive();"><span>Reset</span></button>
+                            </div>
+                        </form>
+                    }
+                    else
+
+                    {
+
+                        <h4>Record Not Found</h4>
+                    }
+
+                    <div class="table-responsive">
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+</div>

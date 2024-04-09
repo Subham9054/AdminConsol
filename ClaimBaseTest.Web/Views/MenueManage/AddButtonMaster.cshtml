@@ -1,0 +1,503 @@
+﻿@model CodeGen.Model.User.ButtonTab
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Title = "AddButtonMaster";
+    //var result = ViewBag.result as List<CodeGen.Model.User.ButtonTab>;
+    //var x = result;
+    //var ButtonMaxSortNo = ViewBag.TabMaxSortNo;
+}
+
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>Add Button Link</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Menue Manage</li>
+                    <li class="breadcrumb-item active" aria-current="page">Add Button Link</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link active" asp-controller="MenueManage" asp-action="AddButtonMaster">Add</a>
+                        <a class="nav-item nav-link" asp-controller="MenueManage" asp-action="ViewButtonMaster">View</a>
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @*<form id="frmCreateButtonMaster" data-parsley-validate novalidate method="post" asp-action="AddButtonMaster" asp-controller="MenueManage" asp-area="" asp-antiforgery="true" onsubmit="return validateForm()">*@
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Project Link Name
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <select id="ddlProjectLink" class="form-control" autofocus>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Global Link Name
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <select id="ddlGlobalLink" class="form-control" autofocus>
+                            </select>
+                            @*<select asp-for="INTGLINKID" name="INTGLINKID"
+                                        id="ddlGlobalLink" class="form-control" onchange="return BindPrimaryLink();">
+                                    <option value="0">--Select Global Link --</option>
+                                </select>*@
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Primary Link Name
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <select id="ddlPrimaryLink" class="form-control" autofocus>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Function Name
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            @*<select asp-for="INTFUNCTIONID" asp-items="@(new SelectList(Model.FunctionList,"INTFUNCTIONID","VCHFUNCTION"))" id="ddlFunctionMaster" class="form-control" onchange="return BindMaxId();">
+                                    <option value="0">--Select Function Name --</option>
+                                </select>*@
+                            <select id="ddlFunctionMaster" class="form-control" autofocus onchange="return BindMaxId();">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Button Name
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <input type="text" id="txtButtonName" class="form-control" placeholder="Enter Button Name" autocomplete="off" maxlength="100" />
+                            @*<input asp-for="CreatedBy" type="hidden" value=@Model.CreatedBy />
+                                <input asp-for="UpdatedBy" type="hidden" value=@Model.CreatedBy />*@
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Open In New Window<span class="text-danger">*</span>
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <input id="chkNewWindow" type="checkbox" />
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Button Sort No :
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <label id="lblslno" name="BMAxid">
+                                @ViewBag.maxbtnid
+                            </label>
+                        </div>
+                    </div>
+                    @*<div class="form-group row" id="dvmaxid">
+                            <div class="col-12 col-md-2 col-xl-2 control-label">
+                                Primary Link Sl No
+                            </div>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                <input type="hidden" asp-for="INTSLNO" name="INTSLNO" id="hfID" />
+                                <label id="lblslno" asp-for="INTSLNO"></label>
+                            </div>
+                        </div>*@
+                    <input id="hdnButton" type="hidden" value="0" />
+                    <div class="form-group row" id="dvsubmit">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> <span class="text-danger"></span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon"></span>
+                            <input type="button" value="Submit" id="btnsubmit" onclick="AddButtonMaster();" class="btn btn-primary mb-1t white-text" />
+                            @*<button type="button" name="submit" id="btnsubmit" class="btn btn-primary mb-1t white-text" title="Submit" value="Submit">Submit</button>*@
+                            <input type="button" id="btnReset" value="Reset" onclick="Reset();" class="btn btn-danger" title="Reset" />
+                        </div>
+                    </div>
+                    @*</form>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        function getUrlVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                vars[key] = decodeURIComponent(value);
+            });
+            return vars;
+        }
+        var id = getUrlVars()["btnid"];
+
+
+        if (id != undefined || id != null) {
+            EditButtonMasterDetails(id);
+        }
+        //if (idDel != undefined || idDel != null) {
+        //    DeleteButtonMaster(idDel);
+        //}
+        BindProject();
+        BindFunction();
+        $('#dvsubmit').hide();
+    });
+
+    function Reset() {
+        $('#hdnButton').val(0);
+        $('#ddlProjectLink').val(0);
+        $('#ddlGlobalLink').val(0);
+        $('#ddlPrimaryLink').val(0);
+        $('#ddlFunctionMaster').val(0);
+        $('#txtButtonName').val("");
+        $("#chkNewWindow").prop("checked", false);
+         window.location.href = "@Url.Action("AddButtonMaster", "MenueManage")";
+    }
+
+    function AddButtonMaster() {
+        //For Update ButtonMaster
+        if ($("#hdnButton").val() != 0) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UpdateButtonMasterDetails", "MenueManage")',
+                data: {
+                    "BUTTONID": $('#hdnButton').val(),
+                    "INTPLINKID": $('#ddlPrimaryLink').val(),
+                    "INTFUNCTIONID": $('#ddlFunctionMaster').val(),
+                    "BUTTONNAME": $('#txtButtonName').val(),
+                    "OPENINNEWWINDOW": $("#chkNewWindow").prop("checked")
+                },
+                dataType: 'JSON',
+                success: function (data) {
+                    if (JSON.parse(data) == 2) {
+                        alert("Button Updated Successfully.");
+                        window.location.href = "@Url.Action("ViewButtonMaster", "MenueManage")";
+                    }
+                }
+            });
+        }
+        else {
+                //--For Add ButtonMaster
+                $.ajax({
+                type: 'POST',
+                url: '@Url.Action("AddButtonMaster", "MenueManage")',
+                data: {
+                    "INTPLINKID": $('#ddlPrimaryLink').val(),
+                    "INTFUNCTIONID": $('#ddlFunctionMaster').val(),
+                    "BUTTONNAME": $('#txtButtonName').val(),
+                    "OPENINNEWWINDOW": $("#chkNewWindow").prop("checked")
+                },
+                dataType: 'JSON',
+                success: function (data) {
+                    if (JSON.parse(data) == 1) {
+                        Reset();
+                        alert("Button Added Successfully.");
+                        window.location.href = "@Url.Action("ViewButtonMaster", "MenueManage")";
+                    }
+                }
+            });
+        }
+    }
+
+    function BindProject() {
+         $.ajax({
+                url: '@Url.Action("GetProject", "MenueManage")',
+                type: 'Get',
+                data: {},
+             success: function (data) {
+                    var data1 = JSON.parse(data);
+                    $("#ddlPrimaryLink").empty();
+                    $("#ddlProjectLink").empty();
+                    $("#ddlProjectLink").append($('<option value="0">--Select Project Link--</option>'));
+                    $.each(data1, function (index, item) {
+                        $("#ddlProjectLink").append($('<option>', {
+                            value: item.INTPROJECTLINKID,
+                            text: item.NVCHPROJECTLINKNAME
+                        }));
+
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+    }
+    $("#ddlProjectLink").change(function () {
+        $.ajax({
+                url: '@Url.Action("BindGlobalLinkByProjectId", "MenueManage")',
+                type: 'Get',
+                data: {"INTPROJECTID":$("#ddlProjectLink").val()},
+            success: function (data) {
+                //debugger;
+                    var data1 = JSON.parse(data);
+                    $("#ddlPrimaryLink").empty();
+                    $("#ddlGlobalLink").empty();
+                $("#ddlGlobalLink").append($('<option value="0">--Select Global Link--</option>'));
+                    $.each(data1, function (index, item) {
+                        $("#ddlGlobalLink").append($('<option>', {
+                            value: item.intGLinkID,
+                            text: item.nvchGLinkName
+                        }));
+                    });
+            },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+    })
+    $("#ddlGlobalLink").change(function () {
+        $.ajax({
+                url: '@Url.Action("BindPrimaryLinkByGlobalLinkId", "MenueManage")',
+                type: 'Get',
+                data: {"INTPLINKID":$("#ddlGlobalLink").val()},
+             success: function (data) {
+                    var data1 = JSON.parse(data);
+                    $("#ddlPrimaryLink").empty();
+                    $("#ddlPrimaryLink").append($('<option value="0">--Select Primary Link--</option>'));
+                    $.each(data1, function (index, item) {
+                        $("#ddlPrimaryLink").append($('<option>', {
+                            value: item.INTPLINKID,
+                            text: item.NVCHPLINKNAME
+                        }));
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+        });
+
+    })
+
+    function BindFunction() {
+         $.ajax({
+                url: '@Url.Action("BindFunction", "MenueManage")',
+                type: 'Get',
+                data: {},
+             success: function (data) {
+                    var data1 = JSON.parse(data);
+                    $("#ddlFunctionMaster").empty();
+                    $("#ddlFunctionMaster").append($('<option value="0">--Select Function Name--</option>'));
+                    $.each(data1, function (index, item) {
+                        $("#ddlFunctionMaster").append($('<option>', {
+                            value: item.INTFUNCTIONID,
+                            text: item.VCHFUNCTION
+                        }));
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+    }
+
+    function EditButtonMasterDetails(id) {
+        //debugger;
+
+        $.ajax({
+                url: '@Url.Action("EditButtonMaster", "MenueManage")',
+                type: 'Get',
+                data: {"BUTTONID":id},
+              success: function (data) {
+                var data1 = JSON.parse(data);
+                 $.each(data1, function (index, item) {
+                     //--Global Link Bind
+
+                     //$("#ddlProjectLink").val(item.INTPROJECTLINKID);
+                     $("#txtButtonName").val(item.BUTTONNAME);
+                     if (item.OPENINNEWWINDOW == "True") {
+                         $("#chkNewWindow").prop("checked", true);
+                     }
+                     else {
+                         $("#chkNewWindow").prop("checked", false);
+                     }
+
+                     $.ajax({
+                    url: '@Url.Action("GetProject", "MenueManage")',
+                    type: 'Get',
+                    data: {},
+                     success: function (data) {
+                            var data1 = JSON.parse(data);
+                            $("#ddlPrimaryLink").empty();
+                            $("#ddlProjectLink").empty();
+                            $("#ddlProjectLink").append($('<option value="0">--Select Project Link--</option>'));
+                            $.each(data1, function (index, item) {
+                                $("#ddlProjectLink").append($('<option>', {
+                                    value: item.INTPROJECTLINKID,
+                                    text: item.NVCHPROJECTLINKNAME
+                                }));
+                            });
+                         $("#ddlProjectLink").val(item.INTPROJECTLINKID);
+                        }
+                    });
+                     //--Global Link Bind
+                        $.ajax({
+                            url: '@Url.Action("BindGlobalLinkByProjectId", "MenueManage")',
+                            type: 'Get',
+                            data: { "INTPROJECTID": item.INTPROJECTLINKID },
+                                success: function (data) {
+                                    var data1 = JSON.parse(data);
+                                    $("#ddlPrimaryLink").empty();
+                                    $("#ddlGlobalLink").empty();
+                                    $("#ddlGlobalLink").append($('<option value="0">--Select Global Link--</option>'));
+                                    $.each(data1, function (index, item) {
+                                        $("#ddlGlobalLink").append($('<option>', {
+                                            value: item.intGLinkID,
+                                            text: item.nvchGLinkName
+                                        }));
+                                    });
+                                    $("#ddlGlobalLink").val(item.INTGLINKID);
+                            //--Primary Link Bind
+                            $.ajax({
+                            url: '@Url.Action("BindPrimaryLinkByGlobalLinkId", "MenueManage")',
+                            type: 'Get',
+                            data: { "INTPLINKID": item.INTGLINKID },
+                            success: function (data) {
+                                var data1 = JSON.parse(data);
+                                $("#ddlPrimaryLink").empty();
+                                $("#ddlPrimaryLink").append($('<option value="0">--Select Primary Link--</option>'));
+                                $.each(data1, function (index, item) {
+                                $("#ddlPrimaryLink").append($('<option>', {
+                                    value: item.INTPLINKID,
+                                    text: item.NVCHPLINKNAME
+                                }));
+                                });
+                                $("#ddlPrimaryLink").val(item.INTPLINKID);
+                            }
+                        });
+                        }
+                        });
+
+                       //--Bind Function
+                        $.ajax({
+                            url: '@Url.Action("BindFunction", "MenueManage")',
+                            type: 'Get',
+                            data: {},
+                            success: function (data) {
+                                var data1 = JSON.parse(data);
+                                $("#ddlFunctionMaster").empty();
+                                $("#ddlFunctionMaster").append($('<option value="0">--Select Function Name--</option>'));
+                                $.each(data1, function (index, item) {
+                                    $("#ddlFunctionMaster").append($('<option>', {
+                                        value: item.INTFUNCTIONID,
+                                        text: item.VCHFUNCTION
+                                    }));
+                                });
+                                $("#ddlFunctionMaster").val(item.INTFUNCTIONID);
+                                }
+                        });
+
+                     $("#hdnButton").val(item.BUTTONID);
+                     $('#dvsubmit').show();
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+        });
+    }
+
+    function BindMaxId() {
+        $('#dvsubmit').show();
+    }
+</script>
+
+<script>
+    @*$(document).ready(function () {
+        $('#dvmaxid').hide();
+        $('#dvsubmit').hide();
+    });
+
+    function BindPrimaryLink() {
+        var INTPLINKID = $(ddlGlobalLink).val();
+         $.ajax({
+                url: '@Url.Action("BindPrimaryLinkByGlobalLinkId", "MenueManage")',
+                type: 'GET',
+                data: { INTPLINKID: INTPLINKID },
+                success: function (data) {
+                    var data1 = JSON.parse(data);
+
+                    $("#ddlPrimaryLink").empty();
+                    $("#ddlPrimaryLink").append($('<option value="0">--Select Primary Link--</option>'));
+                    $.each(data1, function (index, data) {
+
+                        $("#ddlPrimaryLink").append($('<option>', {
+                            value: data.INTPLINKID,
+                            text: data.NVCHPLINKNAME
+                        }));
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+    }
+
+    function BindGlobalLink() {
+
+            var ProjectId = $('#ddlProjectLink').val();
+            var data = {
+                projId: ProjectId
+            };
+
+            $.ajax({
+                type: 'GET',
+                  url: '@Url.Content("~/MenueManage/BindGlobalLinkByProjectId")',
+                data: data,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (response.length == 0) {
+
+                    } else
+                    {
+                    //console.log(response);
+                    $("#ddlGlobalLink").empty();
+                    $("#ddlGlobalLink").append($('<option value="0">--Select Global Link--</option>'));
+                        if (response.length > 0) {
+                            for (var i = 0; i < response.length; i++) {
+                                $("#ddlGlobalLink").append($('<option/>')
+                                    .val(response[i].intGLinkID)
+                                    .html(response[i].nvchGLinkName)
+                                );
+                            }
+                        }
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+            return true;
+    }
+
+    function BindMaxId()
+    {
+        $('#dvsubmit').show();
+    }*@
+</script>

@@ -1,0 +1,302 @@
+﻿@model IEnumerable< CodeGen.Model.FunctionMasterModel.FunctionMasterModel>
+@using CodeGen.Repository.Repository;
+@{
+    ViewBag.Title = "ViewFunctionMasterActive";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+}
+@using CodeGen.Repository.Repositories.Interfaces;
+@using X.PagedList.Mvc.Core; @*//import this so we get our HTML Helper*@
+@using X.PagedList; @*//import this so we can cast our list to IPagedList (only necessary because ViewBag is dynamic)*@
+@using X.PagedList.Mvc.Core.Common;
+@using CodeGen.Model.CommonFunction;
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>View Function Master Active</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Manage Master</li>
+                    <li class="breadcrumb-item active" aria-current="page">Function Master</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link" asp-controller="FunctionMaster" asp-action="AddFunctionMaster">Add</a>
+                        <a class="nav-item nav-link active" asp-controller="FunctionMaster" asp-action="ViewFunctionMasterActive">Active</a>
+                        <a class="nav-item nav-link" asp-controller="FunctionMaster" asp-action="ViewFunctionMasterInActive">InActive</a>
+                    </ul>
+                </div>
+                <div class="search-container">
+                    <div class="search-sec">
+                        <div class="form-group">
+                            @using (Html.BeginForm("ViewFunctionMasterActive", "FunctionMaster", FormMethod.Post))
+                            {
+                                <div class="form-group row">
+                                    <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Function Name</label>
+                                    <div class="col-12 col-md-6 col-xl-4">
+                                        <span class="colon">:</span>
+                                        @Html.TextBox("fn", null, new { @class = "form-control" })
+                                    </div>
+                                    <input type="submit" value="Search" class="btn btn-primary btn-sm" id="btn1" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center"> <a class="searchopen" title="Search" data-toggle="tooltip" data-placement="bottom"> <i class="icon-angle-arrow-down"></i> </a></div>
+                <div class="card-body">
+                    <div class="table">
+                        <form id="formID">
+                            <table style="width:100%" class="table table-bordered cell-border" id="NoteTable">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" id="chkAll" />
+
+                                        </th>
+                                        <th>
+                                            Sl No.
+                                        </th>
+                                        <th>
+                                            Function Name
+                                        </th>
+                                        <th>
+                                            File Name
+                                        </th>
+                                        <th>
+                                            Description
+                                        </th>
+                                        <th>
+                                            Add
+                                        </th>
+                                        <th>
+                                            View
+                                        </th>
+                                        <th>
+                                            Manage
+                                        </th>
+                                        <th>
+                                            Edit
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Count() == 0)
+                                    {
+                                        <div style="color:Red;">
+                                            No records found....
+                                            <script type="text/javascript" language="javascript">
+                                                $('#NoteTable').hide();
+                                                $('btnDelete').hide();
+                                            </script>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <input class="cboxDELclass" id="cboxDELclass" name="checkResp" type="checkbox" value="@item.FunctionId" />
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.RowNo)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.FunctionName)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.FileName)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Description)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.FAdd)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.FView)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.FManage)
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-info btn-sm" href="EditActiveFunction?Id=@CommonFunction.Encrypt(@item.FunctionId.ToString())"><i class="icon-edit1"></i></a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                            <div class="row">
+                                <div style="margin-left: 15px;">
+                                    <input type="button" id="btnDelete" class="btn btn-primary btn-sm" value="Mark AS Inactive" />
+                                    <button type="button" class="btn btn-danger" title="Reset" onclick="return ClearField();"><span class="localize" data-key="Reset">Reset</span></button>
+                                </div>
+
+                            </div>
+
+                            <input id="hdfPids" type="hidden" />
+                        </form>
+                        <div style="float: right;">
+                            @{
+                                if (TempData["funresult"] != null)
+                                {
+                                    TempData["funresult"] = null;
+                                    <script type="text/javascript" language="javascript">
+                                        alert("Function Updated Successfully");
+                                    </script>
+                                }
+
+                            }
+                            @{
+                                if (TempData["funresult1"] != null)
+                                {
+                                    TempData["funresult1"] = null;
+                                    <script type="text/javascript" language="javascript">
+                                        alert("Function already Exists");
+                                    </script>
+                                }
+
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript" src="@Url.Content("~/admjs/validator.js")"></script>
+    <script language="javascript" type="text/javascript">
+        function checkBoxEvent() {
+            var chkCount1;
+            var chkCheckedCount1;
+            $('#NoteTable tr td input[type="checkbox"]').click(function () {
+                if ($(this).is(':checked')) {
+                    chkCount1 = $('#NoteTable tr td input[type="checkbox"]').size();
+                    chkCheckedCount1 = $('#NoteTable tr td input[type="checkbox"]:checked').size();
+                    if (chkCount1 == chkCheckedCount1) {
+                        $('#chkAll').attr('checked', true);
+                    }
+                }
+                else {
+                    $('#chkAll').attr('checked', false);
+                }
+            });
+        }
+        function ClearField() {
+            $('input[type=checkbox]').prop('checked', false);
+        }
+        $(function () {
+            $("#btn1").click(function () {
+                if (!WhiteSpaceValidation1st('search', 'Function')) {
+                    return false;
+                }
+            });
+        });
+
+        function pageLoad() {
+            var SValuee = '@ViewData["Funname"]'
+            if (SValuee != "") {
+                var Fname = $('#fn');
+                Fname.val(SValuee);
+            }
+        }
+        $(document).ready(function () {
+            $("#NoteTable").dataTable({
+                "searching": false
+            });
+            pageLoad();
+            window.history.forward();  //Disable back button after logout
+            $('#chkAll').change(function () {
+
+                if ($(this).prop('checked')) {
+                    $('tbody tr td input[type="checkbox"]').each(function () {
+                        $(this).prop('checked', true);
+                    });
+                } else {
+                    $('tbody tr td input[type="checkbox"]').each(function () {
+                        $(this).prop('checked', false);
+                    });
+                }
+            });
+
+            var tempHTML = "";
+            if (document.getElementById("NoteTable").rows.length > 1) {
+                $("#btnDelete").show();
+            }
+            else {
+                $("#btnDelete").hide();
+                tempHTML += '<tr ><td>No Records Found...</td></tr>';
+                $("#btnDelete").append(tempHTML);
+            }
+
+            $("#btnDelete").click(function (e) {
+                var len = $("#NoteTable tr").length;
+                var strSelecteds = '';
+                var rows = $("#NoteTable tr");
+                for (var i = 0; i < rows.length; i++) {
+                    var row = $(rows).eq(i);
+                    var cb = row.find('input.cboxDELclass');
+                    var checked = (cb.is(':checked'));
+                    var pkno = cb.val();
+                    if (checked) {
+                        strSelecteds = strSelecteds + pkno + ',';
+                    }
+                } //
+
+                if (strSelecteds.length > 0) {
+                    strSelecteds = strSelecteds.substring(0, strSelecteds.length - 1);
+
+                }
+
+                if (strSelecteds.length > 0) {
+                    //                if (strSelecteds.length > 0) {
+                    //                    $.getJSON("/KAC_MVC/ManageButton/MakeInactive", { checkResp: strSelecteds }, function (result) {
+                    //                    });
+
+
+
+                    if (confirm("Are you sure to make inactive the selected record?")) {
+                        $('#hdfPids').val(strSelecteds);
+                        $('ul.pagination').find("li").each(function () {
+
+                            if ($(this).hasClass("active")) {
+
+                                page = $(this).find("a").html();
+                                $('#hdfPidss').val(page);
+
+                            }
+
+                        });
+
+                        $('#hdfPids').val(strSelecteds);
+                        var form = $("form#formID");
+                        form.attr("action", "@Url.Action("InActiveFunctionMaster", "FunctionMaster")");
+                        form.submit();
+                        alert('Record InActivated successfully')
+                    }
+                    else {
+                        e.preventDefault();
+                        return false;
+                    }
+
+                }
+                else {
+                    alert('No record selected for Inactive!');
+                }
+            });
+
+            checkBoxEvent();
+
+        });      //ready end
+    </script>
+}
+

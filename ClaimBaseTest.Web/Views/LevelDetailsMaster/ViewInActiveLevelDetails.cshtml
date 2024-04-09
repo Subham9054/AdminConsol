@@ -1,0 +1,161 @@
+﻿@model CodeGen.Model.LevelDetailMasterModel.LevelDetailsMasterModel
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["Title"] = "Active Level";
+}
+
+@section Scripts {
+
+    @*$(document).ready(function () {
+    @if (TempData["CommandStatus"] != null)
+    {
+        <script type="text/javascript">
+          alert('@(TempData["CommandStatus"])');
+        </script>
+    }
+    });*@
+    <script>
+        $(document).ready(function () {
+            $('#example1').DataTable();
+        });
+    </script>
+    <script>
+        function check_uncheck_checkbox(isChecked) {
+            if (isChecked) {
+                $('input[name="chkbox"]').each(function () {
+                    this.checked = true;
+                });
+            }
+            else {
+                $('input[name="chkbox"]').each(function () {
+                    this.checked = false;
+                });
+            }
+        }
+        function ClearField() {
+            $('input[type=checkbox]').prop('checked', false);
+        }
+
+    </script>
+    <script type="text/javascript" language="javascript">
+        function validateForm() {
+            if ($('#example1 :checked').length == 0) {
+                alert("No record selected for Active!");
+                return false;
+            }
+            else {
+                return confirm('Are you sure you want to Mark As Active?');
+            }
+        }
+
+
+    </script>
+
+}
+
+    <div class="section">
+        <div class="page-title">
+            <div class="title-details">
+                <h4>InActive Level Details Master</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                        <li class="breadcrumb-item">Level Details Master</li>
+                        <li class="breadcrumb-item active" aria-current="page">InActive Level Details Master</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs nav-fill" role="tablist">
+                            <a class="nav-item nav-link " asp-controller="LevelDetailsMaster" asp-action="AddLevelDetailsMaster">Add</a>
+                            <a class="nav-item nav-link" asp-controller="LevelDetailsMaster" asp-action="ViewActiveLevelDetails">Active</a>
+                            <a class="nav-item nav-link active" asp-controller="LevelDetailsMaster" asp-action="ViewInActiveLevelDetails">InActive</a>
+                        </ul>
+                        <div class="indicatorslist">
+                            <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                    @if (Model.LevelDetailsList.Count != 0)
+                    {
+                        <form id="frmInactive" data-parsley-validate novalidate method="post" asp-action="MarkAsActive"
+                          asp-controller="LevelDetailsMaster" asp-area="" asp-antiforgery="true" onsubmit="return validateForm()">
+                            <div class="table-responsive">
+                                <table data-toggle="table" class="table table-hover table-bordered table-padding" id="example1">
+
+                                    <thead>
+                                        <tr>
+                                            <th width="10px"><input type="checkbox" id="checkBoxAll" onclick="check_uncheck_checkbox(this.checked)" /></th>
+                                            <th width="10px">SL#</th>
+                                            <th width="100px">Hierarchy Name</th>
+                                            <th width="20px">Level Name</th>
+                                            <th width="20px">Parent Level Details Name</th>
+                                            <th width="20px">Level Details Name</th>
+                                            <th width="20px">Level Details Alias Name</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.LevelDetailsList.Count != 0)
+                                        {
+                                            @foreach (var level in Model.LevelDetailsList.Select((x, i) => new { Data = x, Index = i + 1 }))
+                                            {
+
+                                                <tr>
+                                                    <td><input type="checkbox" name="chkbox" value="@level.Data.INTLEVELDETAILID" /></td>
+                                                    <td>@level.Index</td>
+                                                    <td>@Html.DisplayFor(modelItem => level.Data.NVCHHIERARCHYNAME)</td>
+                                                    <td>@Html.DisplayFor(modelItem => level.Data.NVCHLABEL)</td>
+                                                    <td>@Html.DisplayFor(modelItem => level.Data.parentlevelDetails)</td>
+                                                    <td>@Html.DisplayFor(modelItem => level.Data.NVCHLEVELNAME)</td>
+                                                    <td>@Html.DisplayFor(modelItem => level.Data.VCHALIAS)</td>
+
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr style="text-align: center;font-size: x-large;font-weight: bolder;">
+                                                <td colspan='6' align='center'> No records found!</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+
+                                <button type="submit" name="submitButton" class="btn btn-primary mb-1t white-text" title="Mark AS Active" value="submit">Mark AS Active</button>
+                                <button type="button" class="btn btn-danger" title="Reset" onclick="return ClearField();"><span class="localize" data-key="Reset">Reset</span></button>
+                            </div>
+                        </form>
+                    }
+                    else
+
+                    {
+
+                        <h4>Record Not Found</h4>
+                    }
+
+                    <div class="table-responsive">
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+

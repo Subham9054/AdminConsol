@@ -1,0 +1,108 @@
+﻿@model CodeGen.Model.DesignationMasterModel.DesignationMaster
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Title = "EditActiveDesignation";
+}
+
+
+
+@section Scripts {
+    @*<script type="text/javascript"
+        src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>*@
+
+    <script src="~/js/AdminConsole/HierarchyMaster.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $("#btnReset").bind("click", function () {
+                  var url = '@Url.Action("ViewActiveDesignation", "DesignationMaster")';
+                window.location.href = url;
+
+            });
+        });
+    </script>
+
+
+
+}
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>Designation Master</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Designation Master</li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Designation Master</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link active" asp-controller="DesignationMaster" asp-action="AddDesignationMaster">Add</a>
+                        <a class="nav-item nav-link active" asp-controller="DesignationMaster" asp-action="ViewActiveDesignation">Active</a>
+                        <a class="nav-item nav-link active" asp-controller="DesignationMaster" asp-action="ViewInActiveDesignation">InActive</a>
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="frUpdateDesgination" data-parsley-validate novalidate method="post" asp-action="EditDesignation" asp-controller="DesignationMaster" asp-area="" asp-antiforgery="true" onsubmit="return UpdvalidateForm()">
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label">
+                                Designation Name
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                <input asp-for="NVCHDESIGNAME" type="text" id="txtupddesignation"
+                                       name="NVCHDESIGNAME"  class="form-control"
+                                       Onkeypress="return inputLimiter(event,'NameCharacters')" placeholder="Enter Hierarchy Name" autocomplete="off" maxlength="100" />
+                            </div>
+
+                        </div>
+                       
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label">
+                                Alias Name
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                <input asp-for="NVCHALIASNAME" type="text" id="txtupdaliasname" name="NVCHALIASNAME"
+                                       Onkeypress="return inputLimiter(event,'NameCharacters')"  class="form-control"
+                                       placeholder="Enter Alias Name" autocomplete="off" maxlength="5" />
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                          
+                          
+
+                            <input asp-for="INTUPDATEDBY" type="hidden" value=@Model.INTUPDATEDBY />
+                            <input asp-for="INTDESIGID" type="hidden" value="@Model.INTDESIGID" />
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> <span class="text-danger"></span></label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon"></span>
+                                <button type="submit" name="submit" id="btnsubmit" class="btn btn-primary mb-1t white-text" title="Submit" value="Submit">Update</button>
+                                <button type="button" id="btnReset" value="Cancel" class="btn btn-danger"> Cancel </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

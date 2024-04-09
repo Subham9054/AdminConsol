@@ -1,0 +1,214 @@
+
+@{
+ViewData["Title"] = "Employee";
+}
+<div class="row">
+		@Html.AntiForgeryToken()
+			@*Write code here*@
+</div><div>
+    <ul class="nav nav-tabs nav-fill" role="tablist">
+        @*<a class="nav-item nav-link active" asp-controller="EmpMaster" asp-action="Employee">Add</a>
+        <a class="nav-item nav-link" asp-controller="EmpMaster" asp-action=ViewEmployee>View</a>*@
+    </ul>
+</div>
+<br />
+<br />
+<br />
+<form id="form">
+
+	<div class="form-group row">
+			<label class="col-12 col-md-2 col-xl-2 mb-3 control-label" for="demo-text-input">Lastname<span class="m-2">:</span></label>
+			<div class="col-12 col-md-6 col-xl-8 mb-3">
+				<input type="text" id="LastName" name="LastName" class="form-control">
+			</div>
+	</div>
+	<div class="form-group row">
+			<label class="col-12 col-md-2 col-xl-2 mb-3 control-label" for="demo-text-input">Firstname<span class="m-2">:</span></label>
+			<div class="col-12 col-md-6 col-xl-8 mb-3">
+				<input type="text" id="FirstName" name="FirstName" class="form-control">
+			</div>
+	</div>
+	<div class="form-group row">
+			<label class="col-12 col-md-2 col-xl-2 mb-3 control-label" for="demo-text-input">Qualification<span class="m-2">:</span></label>
+			<div class="col-12 col-md-6 col-xl-8 mb-3">
+				<input type="text" id="Qualification" name="Qualification" class="form-control">
+			</div>
+	</div>
+	<div class="form-group row">
+			<label class="col-12 col-md-2 col-xl-2 mb-3 control-label" for="demo-text-input">Address<span class="m-2">:</span></label>
+			<div class="col-12 col-md-6 col-xl-8 mb-3">
+				<input type="text" id="Address" name="Address" class="form-control">
+			</div>
+	</div>
+	<div class="form-group row">
+			<label class="col-12 col-md-2 col-xl-2 mb-3 control-label" for="demo-text-input">City<span class="m-2">:</span></label>
+			<div class="col-12 col-md-6 col-xl-8 mb-3">
+				<input type="text" id="City" name="City" class="form-control">
+			</div>
+	</div>
+	<div class="form-group row">
+			<label class="col-12 col-md-2 col-xl-2 mb-3 control-label" for="demo-text-input">Gender<span class="m-2">:</span></label>
+			<div class="col-12 col-md-6 col-xl-8 mb-3">
+				<input type="text" id="Gender" name="Gender" class="form-control">
+			</div>
+	</div>
+	<div class="form-group row">
+			<label class="col-12 col-md-2 col-xl-2 mb-3 control-label" for="demo-text-input">Employeedocument<span class="m-2">:</span></label>
+			<div class="col-12 col-md-6 col-xl-8 mb-3">
+				<input type="text" id="EmployeeDocument" name="EmployeeDocument" class="form-control">
+			</div>
+	</div>
+	<div class="form-group">
+		<label class="col-12 col-md-2 col-xl-2 control-label" for="demo-text-input"></label>
+<br/>
+		<div class="col-12 col-md-8 col-xl-12">
+			<input type="button" value="Submit" id="btn_Submit" class="btn btn-primary" onclick="Save_Employee()"/>
+		</div>
+	</div>
+<input id="hdnEmployee" type="hidden" value="0" />
+</form>
+	
+	<script>
+$(document).ready(function () {
+        function getUrlVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                vars[key] = decodeURIComponent(value);
+            });
+            return vars;
+        }
+        var id = getUrlVars()["strid"];
+
+        if (id != undefined || id != null) {
+            Edit_Employee(id);
+         }
+    });
+function Edit_Employee(id) {
+        $.ajax({
+            type: "Get",
+            dataType: "json",
+            url: '@Url.Action("GetByID_Employee", "EmpMaster")',
+            data: { "Id": id },
+            success: function (Result) {
+                var data1 = JSON.parse(Result);
+   $("#hdnEmployee").val(data1.EmployeeID);
+             $('#LastName').val(data1.LastName);
+					$('#FirstName').val(data1.FirstName);
+					$('#Qualification').val(data1.Qualification);
+					$('#Address').val(data1.Address);
+					$('#City').val(data1.City);
+					$('#Gender').val(data1.Gender);
+					$('#EmployeeDocument').val(data1.EmployeeDocument);
+					
+            },
+            error: function (Message) {
+                alert(Message);
+            }
+        });
+    }        $("#form").validate({
+            rules: {
+                LastName: {
+                    required: true
+                },
+                FirstName: {
+                    required: true
+                },
+                Qualification: {
+                    required: true
+                },
+                Address: {
+                    required: true
+                },
+                City: {
+                    required: true
+                },
+                Gender: {
+                    required: true
+                },
+                EmployeeDocument: {
+                    required: true
+                },
+                            },
+            messages: {
+                LastName: {
+                    required: "Please enter LastName"
+                 },
+                FirstName: {
+                    required: "Please enter FirstName"
+                 },
+                Qualification: {
+                    required: "Please enter Qualification"
+                 },
+                Address: {
+                    required: "Please enter Address"
+                 },
+                City: {
+                    required: "Please enter City"
+                 },
+                Gender: {
+                    required: "Please enter Gender"
+                 },
+                EmployeeDocument: {
+                    required: "Please enter EmployeeDocument"
+                 },
+                
+           },
+            	
+            highlight: function (element) {	
+                $(element).removeClass("is-valid")		
+                $(element).parent().addClass('error')		
+                $(element).addClass("is-invalid")	
+            },	
+            unhighlight: function (element) {	
+                $(element).parent().removeClass('error')	
+                $(element).removeClass("is-invalid");	
+                $(element).addClass("is-valid")	
+            }	
+        });
+			function Save_Employee() {
+			if ($("#form").valid()) {
+					
+					var Employee ={ 
+			
+					 EmployeeID:$('#hdnEmployee').val(),
+LastName:$("#LastName").val(),
+					FirstName:$("#FirstName").val(),
+					Qualification:$("#Qualification").val(),
+					Address:$("#Address").val(),
+					City:$("#City").val(),
+					Gender:$("#Gender").val(),
+					EmployeeDocument:$("#EmployeeDocument").val(),
+					
+				};
+			$.ajax({
+				type: "POST",
+				url: "/EmpMaster/Employee",
+			beforeSend: function (xhr) {
+					xhr.setRequestHeader("XSRF-TOKEN",
+						$('input:hidden[name="__RequestVerificationToken"]').val());
+				},
+			data:Employee,
+			content: 'application/json;charset=utf-8',
+			dataType: "json",
+			success: function (result) {
+						Swal.fire({
+							icon: 'success',
+							title: result.responseText,
+							text: result.responseMessage,
+						}).then((result) => {
+							if (result.isConfirmed) {
+								location.href ="/EmpMaster/ViewEmployee";
+							}
+						})
+			},
+			error: function (result) {
+						Swal.fire({
+							icon: 'error',
+							title: result.responseText,
+							text: result.responseMessage,
+						});
+					}, 
+			});
+			}
+		}
+	</script>

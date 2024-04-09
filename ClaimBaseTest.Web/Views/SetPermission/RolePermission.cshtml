@@ -1,0 +1,169 @@
+﻿@model CodeGen.Model.Set_Permission.SetPermissionDetails
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Title = "Add Project Link";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.full.min.js"></script>
+}
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>Add Role</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item active" aria-current="page">Set Functions Using Role</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link active" asp-controller="SetPermission" asp-action="RolePermission">Add</a>
+                        @*<a class="nav-item nav-link" asp-controller="ProjectLink" asp-action="ViewActiveProjectLink">Active</a>
+                        <a class="nav-item nav-link" asp-controller="ProjectLink" asp-action="ViewInActiveProjectLink">InActive</a>*@
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Role
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <select class="form-control" id="ddlrole" name="ddlrole" autofocus="autofocus" style="width:200px">
+                                @foreach (var item in ViewBag.Rolelistddl)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Pages
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <select class="form-control searchableselect select ddluserrole" id="ddluserrole" name="ddluserrole" autofocus="autofocus" style="height:50px;width:200px;"multiple>
+                                @foreach (var item in ViewBag.Functionlistddl)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> <span class="text-danger"></span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon"></span>
+                            <button type="submit" name="submit" id="btnsubmit" class="btn btn-primary mb-1t white-text" title="Submit" value="Submit">Submit</button>
+                            <button type="button" class="btn btn-danger" title="Reset" onclick="return ClearField();"> Reset </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        debugger;
+        $("select.ddluserrole").each(function () {
+            $(this).select2();
+        });
+
+        var urlParams = new URLSearchParams(window.location.search);
+        var Roleid = urlParams.get('Roleid');
+
+        $('#ddlrole').val(Roleid);
+        $('#ddlrole').trigger('change');
+
+
+        $("#btnsubmit").off("click").on("click", function () {
+            debugger;
+            var formDataArray = [];
+            var filedata = new FormData();
+            var functionid = '';
+            var item = {};
+            var hasZeroValue = false;
+
+            // Collect data for this row
+            item.Roleid = $("#ddlrole").val();
+
+            // Collect selected values from the dropdown
+            var selectedValues = [];
+            $('select[id^="ddluserrole"]:first').each(function () {
+                var val = $(this).val();
+                selectedValues.push((val !== null && val !== undefined) ? val : '0'); // Check for null or undefined values and replace them with '0'
+            });
+            console.log("Number of selected options role:", selectedValues.length);
+            console.log(selectedValues);
+
+            // Check if any dropdown has data
+            if (selectedValues.length === 0) {
+                return true; // Continue to next iteration
+            }
+
+            var functionid = selectedValues.join(',');
+            item.FunctionIds = functionid;
+
+            formDataArray.push(item);
+
+            // If formDataArray is empty, no dropdown had data, so return false
+            if (formDataArray.length === 0) {
+                return false;
+            }
+
+            filedata.append("RoleSet", JSON.stringify(formDataArray));
+            UpdateData(filedata);
+        });
+
+    })
+
+    $("#ddlrole").on("change", function () {
+        debugger;
+        var values = $(this).val().split(',') 
+        $("#ddluserrole option").hide() 
+        for (var i = 0; i < values.length; i++) {
+            var vals = values[i]
+            $("#ddluserrole option[value=" + vals + "]").show()
+        }
+    })
+
+    function UpdateData(setPermissionModel) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: '/SetPermission/AddRolePermission', // Assuming correct URL for the server endpoint
+            data: setPermissionModel,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                // Handle success response
+                if(response==""){
+                    alert("Permission given to the role  Successfully");
+                }
+                else{
+                    alert("Error Ocurred");
+                }
+
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                // Handle error response
+                //console.error("Error sending data for row " + (index + 1) + ": " + textStatus);
+            }
+        });
+    }
+</script>

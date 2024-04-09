@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfNamespaceModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <NamespaceModel>
+    <namespacename>ClaimBaseTest.Repository.Repository</namespacename>
+    <name>CityMaster</name>
+  </NamespaceModel>
+  <NamespaceModel>
+    <namespacename>ClaimBaseTest.Repository.Repository</namespacename>
+    <name>CompanyMaster</name>
+  </NamespaceModel>
+  <NamespaceModel>
+    <namespacename>ClaimBaseTest.Repository.Repository</namespacename>
+    <name>EmpMaster</name>
+  </NamespaceModel>
+</ArrayOfNamespaceModel>

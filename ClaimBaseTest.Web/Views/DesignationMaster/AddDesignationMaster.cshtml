@@ -1,0 +1,86 @@
+﻿@model CodeGen.Model.DesignationMasterModel.DesignationMaster
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Title = "AddDesignationMaster";
+}
+
+
+@section Scripts {
+   
+    <script src="~/js/AdminConsole/DesignationMaster.js"></script>
+}
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>Add</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Designation Master</li>
+                    <li class="breadcrumb-item active" aria-current="page">Add Designation Master</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link active" asp-controller="DesignationMaster" asp-action="AddDesignationMaster">Add</a>
+                        <a class="nav-item nav-link" asp-controller="DesignationMaster" asp-action="ViewActiveDesignation">Active</a>
+                        <a class="nav-item nav-link" asp-controller="DesignationMaster" asp-action="ViewInActiveDesignation">InActive</a>
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="frmCreateDesignation" data-parsley-validate novalidate method="post" asp-action="AddDesignationMaster" asp-controller="DesignationMaster" asp-area="" asp-antiforgery="true" onsubmit="return validateForm()">
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label">
+                                Designation Name
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+
+                                <input asp-for="NVCHDESIGNAME" type="text" id="txtDesignation" name="NVCHDESIGNAME"
+                                       class="form-control" Onkeypress="return inputLimiter(event,'NameCharacters')"
+                                       placeholder="Enter Designation Name" autocomplete="off" maxlength="100" autofocus />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label">
+                                Alias Name
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                <input asp-for="NVCHALIASNAME" type="text" id="txtaliasname" name="NVCHALIASNAME"
+                                       Onkeypress="return inputLimiter(event,'NameCharacters')"
+                                       class="form-control" placeholder="Enter Alias Name" autocomplete="off" maxlength="5" />
+                            </div>
+
+                        </div>
+                        <input asp-for="INTCREATEDBY" type="hidden" value='@ViewBag.CREATEDBY' />
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> <span class="text-danger"></span></label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon"></span>
+                                <button type="submit" name="submit" id="btnsubmit" class="btn btn-primary mb-1t white-text" title="Submit" value="Submit">Submit</button>
+                                <button type="button" class="btn btn-danger" title="Reset" onclick="return ClearField();"> Reset </button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

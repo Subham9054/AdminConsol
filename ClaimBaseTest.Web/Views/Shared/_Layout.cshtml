@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @*<title>Admin</title>*@
+    <meta name="keywords" content="ADSYS" />
+    <meta name="description" content="ADSYS" />
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/icons.css" rel="stylesheet" />
+    <link href="~/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/css/custom.css" rel="stylesheet">
+    @*//imp for structur*@
+    <link href="~/css/dashboard.css" rel="stylesheet">
+    <link href="~/css/slimscrollbar.min.css" rel="stylesheet">
+    <script src="~/js/chartist-plugin-tooltip.js"></script>
+    <script src="~/js/chartist.min.js"></script>
+    <script src="~/js/jquery-3.3.1.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/common.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <!-- Navbar brand -->
+            <a class="navbar-brand" href="javascript:void:(0);">
+
+                <h1>
+                </h1>
+            </a>
+            <a class="nav-toggle-btn">
+                <span></span>
+            </a>
+
+            <div class="navbar-collapse justify-content-end collapse" id="basicExampleNav">
+                <!-- Links -->
+                <ul class="navbar-nav">
+                    @using System.Security.Claims  @*This is for Claims Login*@
+                    @{
+                        var userName = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                    }
+                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle welcome" data-toggle="dropdown" href="Javascript:void(0);">
+                            Welcome
+                            <span class="bg-danger">
+                                @userName
+                                @*@HttpContextAccessor.HttpContext.Session.GetString("UserName")*@  @*This is for Basic Login*@
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link logout" href="Javascript:void(0);"><i class="icon-log-out1"></i></a>
+                    </li>
+                    <!-- Dropdown -->
+                </ul>
+                <!-- Links -->
+            </div>
+            <!-- Collapsible content -->
+        </nav>
+        <!--/.Navbar-->
+    </header>
+    <div class="logout-modal">
+        <div class="logou-container text-center">
+            <div class="container">
+                <h3>Do you really want to log out?</h3>
+                @*<a class="btn btn-mint" asp-controller="CodeGenLogin" asp-action="Userlogin">Yes</a>*@
+                <a class="btn btn-mint" asp-area="" asp-controller="Home" asp-action="LogOut">Yes</a>
+                <a class="btn btn-danger nologout">No</a>
+            </div>
+        </div>
+    </div>
+    <div class="page-container">
+        <div class="sidemenu" id="dashboard">
+            <div class="user-profile">
+                <a class="dropdown-toggle" data-toggle="dropdown">
+                    <span> </span>
+                </a>
+            </div>
+            <div class="clearfix">
+            </div>
+            <ul class="navbar">
+                <div class="navbar-collapse justify-content-end" id="basicExampleNav">
+                    <ul class="navbar-nav" id="AdConsole">
+                        @await Component.InvokeAsync("AdminConsole")
+                    </ul>
+                </div>
+            </ul>
+        </div>
+
+        <div class="mainpanel">
+            <div>
+                @await Component.InvokeAsync("ButtonTab", new { plinkValue = "", btnid = "" })
+            </div>
+            <div class="section">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <footer class="page-footer no-padding white blue-text hide">
+        <div class="footer-copyright">
+            <div class="container">
+                &copy; 2023 All right reserved
+                <a class="right" href="javascript:void(0);">Developed by CSM</a>
+            </div>
+        </div>
+    </footer>
+    <div class="setting-box">
+        <div class="profile-details">
+            <a class="setting-close" href="javascript:void(0)"><span class="icon-x1"></span></a>
+            <div class="change__list">
+                <ul>
+
+                    <li>
+                        @*<a href="#" asp-controller="CodeGenLogin" asp-action="LogOut" data-toggle="tooltip" data-placement="top" data-original-title="Sign out">
+                                <span class="icon-log-out1"></span>
+                            </a>*@
+                        @*<a href="#" data-toggle="tooltip" data-placement="top" data-original-title="Sign out">
+                                <span class="icon-log-out1"></span>
+                            </a>*@
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    <link href="~/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <script src="~/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/js/slimscrollbar.min.js"></script>
+    <script src="~/js/custom.js"></script>
+</body>
+</html>

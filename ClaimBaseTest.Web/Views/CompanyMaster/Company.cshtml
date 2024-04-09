@@ -1,0 +1,172 @@
+
+@{
+ViewData["Title"] = "Company";
+}
+<div class="row">
+		@Html.AntiForgeryToken()
+			@*Write code here*@
+</div><div>
+    <ul class="nav nav-tabs nav-fill" role="tablist">
+        @*<a class="nav-item nav-link active" asp-controller="CompanyMaster" asp-action="Company">Add</a>
+        <a class="nav-item nav-link" asp-controller="CompanyMaster" asp-action=ViewCompany>View</a>*@
+    </ul>
+</div>
+<br />
+<br />
+<br />
+<form id="form">
+
+	<div class="form-group row">
+			<label class="col-12 col-md-2 col-xl-2 mb-3 control-label" for="demo-text-input">Comanyname<span class="m-2">:</span></label>
+			<div class="col-12 col-md-6 col-xl-8 mb-3">
+				<input type="text" id="ComanyName" name="ComanyName" class="form-control">
+			</div>
+	</div>
+	<div class="form-group row">
+			<label class="col-12 col-md-2 col-xl-2 mb-3 control-label" for="demo-text-input">Companyaddress<span class="m-2">:</span></label>
+			<div class="col-12 col-md-6 col-xl-8 mb-3">
+				<input type="text" id="CompanyAddress" name="CompanyAddress" class="form-control">
+			</div>
+	</div>
+	<div class="form-group row">
+			<label class="col-12 col-md-2 col-xl-2 mb-3 control-label" for="demo-text-input">Companybranch<span class="m-2">:</span></label>
+			<div class="col-12 col-md-6 col-xl-8 mb-3">
+				<input type="text" id="CompanyBranch" name="CompanyBranch" class="form-control">
+			</div>
+	</div>
+	<div class="form-group row">
+			<label class="col-12 col-md-2 col-xl-2 mb-3 control-label" for="demo-text-input">Companydocument<span class="m-2">:</span></label>
+			<div class="col-12 col-md-6 col-xl-8 mb-3">
+				<input type="text" id="CompanyDocument" name="CompanyDocument" class="form-control">
+			</div>
+	</div>
+	<div class="form-group">
+		<label class="col-12 col-md-2 col-xl-2 control-label" for="demo-text-input"></label>
+<br/>
+		<div class="col-12 col-md-8 col-xl-12">
+			<input type="button" value="Submit" id="btn_Submit" class="btn btn-primary" onclick="Save_Company()"/>
+		</div>
+	</div>
+<input id="hdnCompany" type="hidden" value="0" />
+</form>
+	
+	<script>
+$(document).ready(function () {
+        function getUrlVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                vars[key] = decodeURIComponent(value);
+            });
+            return vars;
+        }
+        var id = getUrlVars()["strid"];
+
+        if (id != undefined || id != null) {
+            Edit_Company(id);
+         }
+    });
+function Edit_Company(id) {
+        $.ajax({
+            type: "Get",
+            dataType: "json",
+            url: '@Url.Action("GetByID_Company", "CompanyMaster")',
+            data: { "Id": id },
+            success: function (Result) {
+                var data1 = JSON.parse(Result);
+   $("#hdnCompany").val(data1.CompanyID);
+             $('#ComanyName').val(data1.ComanyName);
+					$('#CompanyAddress').val(data1.CompanyAddress);
+					$('#CompanyBranch').val(data1.CompanyBranch);
+					$('#CompanyDocument').val(data1.CompanyDocument);
+					
+            },
+            error: function (Message) {
+                alert(Message);
+            }
+        });
+    }        $("#form").validate({
+            rules: {
+                ComanyName: {
+                    required: true
+                },
+                CompanyAddress: {
+                    required: true
+                },
+                CompanyBranch: {
+                    required: true
+                },
+                CompanyDocument: {
+                    required: true
+                },
+                            },
+            messages: {
+                ComanyName: {
+                    required: "Please enter ComanyName"
+                 },
+                CompanyAddress: {
+                    required: "Please enter CompanyAddress"
+                 },
+                CompanyBranch: {
+                    required: "Please enter CompanyBranch"
+                 },
+                CompanyDocument: {
+                    required: "Please enter CompanyDocument"
+                 },
+                
+           },
+            	
+            highlight: function (element) {	
+                $(element).removeClass("is-valid")		
+                $(element).parent().addClass('error')		
+                $(element).addClass("is-invalid")	
+            },	
+            unhighlight: function (element) {	
+                $(element).parent().removeClass('error')	
+                $(element).removeClass("is-invalid");	
+                $(element).addClass("is-valid")	
+            }	
+        });
+			function Save_Company() {
+			if ($("#form").valid()) {
+					
+					var Company ={ 
+			
+					 CompanyID:$('#hdnCompany').val(),
+ComanyName:$("#ComanyName").val(),
+					CompanyAddress:$("#CompanyAddress").val(),
+					CompanyBranch:$("#CompanyBranch").val(),
+					CompanyDocument:$("#CompanyDocument").val(),
+					
+				};
+			$.ajax({
+				type: "POST",
+				url: "/CompanyMaster/Company",
+			beforeSend: function (xhr) {
+					xhr.setRequestHeader("XSRF-TOKEN",
+						$('input:hidden[name="__RequestVerificationToken"]').val());
+				},
+			data:Company,
+			content: 'application/json;charset=utf-8',
+			dataType: "json",
+			success: function (result) {
+						Swal.fire({
+							icon: 'success',
+							title: result.responseText,
+							text: result.responseMessage,
+						}).then((result) => {
+							if (result.isConfirmed) {
+								location.href ="/CompanyMaster/ViewCompany";
+							}
+						})
+			},
+			error: function (result) {
+						Swal.fire({
+							icon: 'error',
+							title: result.responseText,
+							text: result.responseMessage,
+						});
+					}, 
+			});
+			}
+		}
+	</script>

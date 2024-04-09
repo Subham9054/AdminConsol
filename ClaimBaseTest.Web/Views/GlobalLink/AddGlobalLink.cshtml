@@ -1,0 +1,197 @@
+﻿@model CodeGen.Model.GlobalLink.ViewGlobal
+@{
+     Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Title = "Add Global Link";
+}
+
+
+
+
+@section Scripts {
+    @*<script type="text/javascript"
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>*@
+
+    <script type="text/javascript" language="javascript">
+        function validateForm() {
+            var x = document.forms["frmCreateGlobalLink"]["GlobalLinkName"].value;
+         
+             if ($("#ddlProjectLink").val() == 0) {
+                $("#ddlProjectLink").focus();
+                alert("Please Select Project Link  Name.");
+
+                return false;
+            }
+             else if ($("#txtGLinkName").val() == "") {
+                $("#txtGLinkName").focus();
+                alert(" Global Link Name Can't be blank.");
+
+               return false;
+
+             }
+             else if ($("#txtIconClass").val() == "") {
+                 $("#txtIconClass").focus();
+                 alert("Icon Class Can't be blank.");
+
+                 return false;
+             }
+            else if ($("#txtsortnum").val() == "") {
+                $("#txtsortnum").focus();
+                alert(" Global Link Sort No Can't be blank.");
+
+               return false;
+
+           }
+            else {
+                return confirm('Are you sure you want to  create this?');
+            }
+        }
+
+        function inputLimiter(e, allow) {
+    var AllowableCharacters = '';
+
+    if (allow == 'NameCharactersymbol') {
+        AllowableCharacters = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz./&';
+    }
+    if (allow == 'NameCharacters') {
+        AllowableCharacters = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-.\'';
+    }
+    if (allow == 'Email') {
+        AllowableCharacters = '1234567890@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_.';
+    }
+    if (allow == 'Description') {
+        AllowableCharacters = '1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-.,()/';
+    }
+    if (allow == 'NameCharactersAndNumbers') {
+                AllowableCharacters = '1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-,/.\&';
+      }
+    if (allow == 'Numbers') {
+        AllowableCharacters = '1234567890';
+    }
+    if (allow == 'Decimal') {
+        AllowableCharacters = '1234567890.';
+    }
+    if (allow == 'Filename') {
+        AllowableCharacters = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/';
+    }
+    var k;
+    k = document.all ? parseInt(e.keyCode) : parseInt(e.which);
+    if (k != 13 && k != 8 && k != 0) {
+        if ((e.ctrlKey == false) && (e.altKey == false)) {
+            return (AllowableCharacters.indexOf(String.fromCharCode(k)) != -1);
+        }
+        else {
+            return true;
+        }
+    }
+    else {
+        return true;
+    }
+        }
+        
+         $(function () {
+            $("#btnReset").bind("click", function () {
+                $("#ddlProjectLink")[0].selectedIndex = 0;
+                document.forms["frmCreateGlobalLink"]["GlobalLinkName"].value = "";
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#lblslno").text(@Model.GMAxid);
+            $("#hfID").text(@Model.GMAxid);
+      
+        });
+    </script>
+
+}
+
+<div class="section">
+
+    <div class="page-title">
+        <div class="title-details">
+            <h4>Add Global Link</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Global Link</li>
+                    <li class="breadcrumb-item active" aria-current="page">Add Global Link</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link active" asp-controller="GlobalLink" asp-action="AddGlobalLink">Add</a>
+                        <a class="nav-item nav-link" asp-controller="GlobalLink" asp-action="ViewGlobalLinkActive">Active</a>
+                        <a class="nav-item nav-link" asp-controller="GlobalLink" asp-action="ViewGlobalLinkInActive">Inactive</a>
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="frmCreateGlobalLink" data-parsley-validate novalidate method="post" asp-action="AddGlobalLink" asp-controller="GlobalLink" asp-area="" asp-antiforgery="true" onsubmit="return validateForm()">
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label">
+                                Project Link Name
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                <select asp-for="INTPROJECTLINKID" asp-items="@(new SelectList(Model.ProjectList,"INTPROJECTLINKID","NVCHPROJECTLINKNAME"))" id="ddlProjectLink" class="form-control" autofocus>
+                                    <option value="0">--Select Project Link--</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label">
+                                Global Link Name :
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                <input asp-for="GlobalLinkName" type="text" id="txtGLinkName" name="GlobalLinkName" Onkeypress="return inputLimiter(event,'NameCharactersAndNumbers')" class="form-control" placeholder="Enter Global Link Name" autocomplete="off" maxlength="50" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label">
+                                Icon Class :
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                <input asp-for="VCHICONCLASS" type="text" id="txtIconClass" name="VCHICONCLASS" class="form-control" placeholder="Enter Icon Class" autocomplete="off" maxlength="50" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label">
+                                Global Link Sort No :
+                            </label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                <input type="hidden" asp-for="GintSortNum" name="GintSortNum" id="hfID" />
+                                <label id="lblslno" asp-for="GMAxid" name="GMAxid"></label>
+                                <input asp-for="CreatedBy" type="hidden" value=@Model.CreatedBy />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> <span class="text-danger"></span></label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <button type="submit" name="submit" title="Submit" id="btnsubmit" class="btn btn-primary mb-1t white-text" value="Submit">Submit</button>
+                                <button type="button" class="btn btn-danger" title="Reset" id="btnReset"> Reset </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

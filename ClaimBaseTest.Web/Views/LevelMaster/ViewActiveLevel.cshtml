@@ -1,0 +1,164 @@
+﻿@model CodeGen.Model.LevelMasterModel.LevelMasterModel
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["Title"] = "Active Global Link";
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#example1').DataTable();
+        });
+    </script>
+    <script>
+        function check_uncheck_checkbox(isChecked) {
+            if (isChecked) {
+                $('input[name="chkbox"]').each(function () {
+                    this.checked = true;
+                });
+            }
+            else {
+                $('input[name="chkbox"]').each(function () {
+                    this.checked = false;
+                });
+            }
+        }
+        function ClearField() {
+            $('input[type=checkbox]').prop('checked', false);
+        }
+
+    </script>
+    <script type="text/javascript" language="javascript">
+        function validateForm() {
+            if ($('#example1 :checked').length == 0) {
+                alert("No record selected for Inactive!");
+                return false;
+            }
+            else {
+                return confirm('Are you sure you want to Mark As In-Active?');
+            }
+        }
+
+
+    </script>
+
+}
+    @{
+    if (TempData["CommandStatus"] != null)
+    {
+        <script type="text/javascript">
+            alert('@(TempData["CommandStatus"])');
+        </script>
+    }
+
+}
+
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>Active Level Master</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Level Master</li>
+                    <li class="breadcrumb-item active" aria-current="page">Active Level Master</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link" asp-controller="LevelMaster" asp-action="AddLevelMaster">Add</a>
+                        <a class="nav-item nav-link active" asp-controller="LevelMaster" asp-action="ViewActiveLevel">Active</a>
+                        <a class="nav-item nav-link" asp-controller="LevelMaster" asp-action="ViewInActiveLevel">InActive</a>
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model.LevelList.Count != 0)
+                    {
+                        <form id="frmActive" data-parsley-validate novalidate method="post" asp-action="MarkAsInactive"
+                          asp-controller="LevelMaster" asp-area="" asp-antiforgery="true" onsubmit="return validateForm()">
+                            <div class="table-responsive">
+                                <table data-toggle="table" class="table table-hover table-bordered table-padding" id="example1">
+
+                                    <thead>
+                                        <tr>
+                                            <th width="10px"><input type="checkbox" id="checkBoxAll" onclick="check_uncheck_checkbox(this.checked)" /></th>
+                                            <th width="10px">SL#</th>
+                                            <th width="100px">Hierarchy Name</th>
+                                            <th width="100px">Parent Level Name</th>
+                                            <th width="20px">Level Name</th>
+                                            <th width="20px">Alias Name</th>
+                                            <th width="20px">Edit</th>
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.LevelList.Count != 0)
+                                        {
+                                            @foreach (var level in Model.LevelList.Select((x, i) => new { Data = x, Index = i + 1 }))
+                                            {
+
+                                                <tr>
+                                                    <td><input type="checkbox" name="chkbox" value="@level.Data.INTLEVELID" /></td>
+                                                    <td>@level.Index</td>
+                                                    <td>@Html.DisplayFor(modelItem => level.Data.NVCHHIERARCHYNAME)</td>
+                                                    <td>@Html.DisplayFor(modelItem => level.Data.parentlevel)</td>
+                                                    <td>@Html.DisplayFor(modelItem => level.Data.NVCHLABEL)</td>
+                                                    <td>@Html.DisplayFor(modelItem => level.Data.VCHALLIAS)</td>
+                                                    <td>
+                                                        <a class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Edit" asp-controller="LevelMaster" asp-action="EditActiveLevel" asp-route-id="@level.Data.INTLEVELID">
+                                                            <i class="icon-edit1">Edit</i>
+                                                        </a>
+                                                    </td>
+
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr style="text-align: center;font-size: x-large;font-weight: bolder;">
+                                                <td colspan='6' align='center'> No records found!</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+
+                                <button type="submit" name="submitButton" class="btn btn-primary mb-1t white-text" title="Mark AS Inactive" value="submit">Mark AS Inactive</button>
+                                <button type="button" title="Reset" class="btn btn-danger" onclick="return ClearField();"><span>Reset</span></button>
+                            </div>
+                        </form>
+                    }
+                    else
+
+                    {
+
+                        <h4>Record Not Found</h4>
+                    }
+
+                    <div class="table-responsive">
+                    </div>
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+

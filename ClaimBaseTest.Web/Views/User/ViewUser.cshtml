@@ -1,0 +1,239 @@
+﻿@model CodeGen.Model.User.User
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["Title"] = "ViewUser";
+    var listData = ViewBag.UserDetails as IList<CodeGen.Model.User.User>;
+}
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#UserTable").dataTable({
+                "searching": false
+            });
+        });
+    </script>
+    <script>
+        $('.btnDelete').click(function () {
+            if (confirm('Are you sure you want to delete?')) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
+    </script>
+
+}
+@{
+    if (TempData["userResult"] != null)
+    {
+        if ((TempData["userResult"].ToString()) == "3")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("User deleted Successfully !");
+            </script>
+        }
+        else if ((TempData["userResult"].ToString()) == "7")
+        {
+            <script type="text/javascript" language="javascript">
+                alert("User Already in use !");
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">
+                alert('@TempData["userResult"]');
+            </script>
+        }
+        TempData["Result"] = null;
+    }
+
+}
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>Add User</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Manage User</li>
+                    <li class="breadcrumb-item active" aria-current="page">View User List</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link" asp-controller="User" asp-action="AddUser">Add</a>
+                        <a class="nav-item nav-link active" asp-controller="User" asp-action="ViewUser">View</a>
+                    </ul>
+
+                </div>
+                <div class="search-container">
+                    <div class="search-sec">
+                        <div class="form-group">
+                            <form asp-controller="User" asp-action="ViewSearchUser" method="post">
+
+                                <div class="form-group row">
+                                    <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Designation</label>
+                                    <div class="col-12 col-md-6 col-xl-4">
+                                        <span class="colon">:</span>
+                                        <select asp-for="intDesignationID" class="form-control" id="ddlDesgn" asp-items="@(new SelectList(ViewBag.Designation, "INTDESIGID", "NVCHDESIGNAME",ViewBag.DesigId))">
+                                            <option>--All--</option>
+                                        </select>
+                                    </div>
+                                    <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Physical Location</label>
+                                    <div class="col-12 col-md-6 col-xl-4">
+                                        <span class="colon">:</span>
+                                        <select asp-for="intLocation" class="form-control" id="ddlPhyLoc" asp-items="@(new SelectList(ViewBag.PhysicalLoc, "INTLOCATIONID", "NVCHLOCATION",ViewBag.LocIds))">
+                                            <option>--All--</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">Mobile</label>
+                                    <div class="col-12 col-md-6 col-xl-4">
+                                        <span class="colon">:</span>
+                                        <input asp-for="vchmobtel" class="form-control" type="text" maxlength="10" id="txtMobile" value="@ViewBag.Mob" />
+                                    </div>
+                                    <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input">User Name</label>
+                                    <div class="col-12 col-md-6 col-xl-4">
+                                        <span class="colon">:</span>
+                                        <input type="text" asp-for="vchusername" class="form-control" maxlength="50" id="txtUserNm" value="@ViewBag.Uname" />
+
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"></label>
+                                    <div class="col-12 col-md-6 col-xl-4">
+                                        <span class="colon"></span>
+                                        <input type="submit" value="Search" class="btn btn-primary btn-sm" id="btnSearch" />
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center"> <a class="searchopen" title="Search" data-toggle="tooltip" data-placement="bottom"> <i class="icon-angle-arrow-down"></i> </a></div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table style="width:100%" class="table table-bordered cell-border" id="UserTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Sl No.
+                                    </th>
+                                    <th>
+                                        Name
+                                    </th>
+                                    <th>
+                                        User Name
+                                    </th>
+                                    <th>
+                                        Location
+                                    </th>
+                                    <th>
+                                        Physical Location
+                                    </th>
+                                    <th>
+                                        Date Of Joining
+                                    </th>
+                                    <th>
+                                        Designation
+                                    </th>
+                                    <th>
+                                        Gender
+                                    </th>
+                                    <th>
+                                        Date Of Birth
+                                    </th>
+                                    <th>
+                                        Email
+                                    </th>
+                                    <th>
+                                        Mobile
+                                    </th>
+                                    <th>Image</th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (listData.Count == 0)
+                                {
+
+                                    <tr><td colspan="12" align="center">No record found!</td></tr>
+                                }
+                                else
+                                {
+                                    foreach (var item in listData)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.RowNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.vchfullname)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.vchusername)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.nvchlevelname)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.nvchlocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DateOfJoing)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.nvchdesigname)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Gender)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DateOfBirth)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.vchemail)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.vchmobtel)
+                                            </td>
+                                            <td><img src="~/UserImage/@item.UserImage" alt="No Image" style="width: 60px;height:70px;" id="showPhoto" /> @*<a href="~/UserImage/@item.UserImage" target="_blank">@item.UserImage</a>*@</td>
+                                            <td>
+
+                                                <a class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Edit" asp-controller="User" asp-action="EditUser" asp-route-id="@item.intuserid">
+                                                    <i class="icon-edit1"></i>
+                                                </a>
+
+                                                <a class="btn btn-danger btn-sm btnDelete" id="" asp-controller="User" asp-action="DeleteUser" asp-route-id="@item.intuserid">
+                                                    <i class="icon-delete1"></i>
+                                                </a>
+
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+

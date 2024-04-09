@@ -1,0 +1,105 @@
+
+@{
+ViewData["Title"] = "ViewCity";
+}
+<div class="row">
+		@Html.AntiForgeryToken()
+			@*Write code here*@
+</div><div>
+    <ul class="nav nav-tabs nav-fill" role="tablist">
+        @*<a class="nav-item nav-link " asp-controller="CityMaster" asp-action="City">Add</a>
+        <a class="nav-item nav-link active" asp-controller="CityMaster" asp-action=ViewCity>View</a>*@
+    </ul>
+</div>
+<br />
+<br />
+<br />
+<div>
+
+		 <br/>
+ <table class="table" id="tbl">
+			<thead>
+				<tr>
+					<th>
+						Cityname
+					</th>
+					 
+			<th> Action </th>
+				</tr>
+			</thead>
+			<tbody>
+
+
+			</tbody>
+		</table>
+	</div>
+
+	
+	<script>
+$(document).ready(function(){
+	Get_City();
+	});
+	function Get_City() {
+		$.ajax ({
+		 type:'Get',
+		 dataType: 'Json',
+		 contentType: 'application/json; charset=utf-8',
+		 data: { },
+			url: "@Url.Action("Get_City","CityMaster")",
+			success: function (result) {
+				var data1 = JSON.parse(result);
+				if (data1.length > 0) {
+				$('#tbl.tbody').empty();
+					$.each(data1, function (i, data) {
+					var trows ="<tr>";
+					trows = trows +"<td>"+ data.CityName +"</td>";
+					trows=trows + "<td>" + "<a class='btn-primary' href='/CityMaster/City?strid="+ data.CityId +"'>Edit</a>&nbsp;<button class='btn-danger' onclick='Delete_City("+ data.CityId +")'>Delete</button>" + "</td>";
+					trows = trows + "</tr>";
+					$('#tbl').append(trows);
+					});
+				}
+			},
+		error: function (Message) {
+		alert(Message);
+			}
+		});
+		}
+	
+     function Delete_City(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                  $.ajax({
+                    type: "Delete",
+                    dataType: "json",
+                    url: "@Url.Action("Delete_City","CityMaster")",
+			
+                    data: { "Id": id },
+                      success: function (response) {
+                          Swal.fire(
+                              'Deleted!',
+                              'Data Deleted Successfully!',
+                              'success'
+                        ).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = "/CityMaster/ViewCity";
+                            }
+                            else if (result.isDenied) {
+                                Swal.fire('Changes are not saved', '', 'info')
+                            }
+                        })
+                    }
+                });
+
+            }
+            return false;
+        })
+    }	
+</script>

@@ -1,0 +1,146 @@
+﻿@model CodeGen.Model.ProjectMaster.Project
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Title = "Add Project Link";
+}
+
+
+@section Scripts {
+    <script type="text/javascript" language="javascript">
+        function validateForm() {
+            if ($("#txtprojectname").val() == "") {
+                $("#txtprojectname").focus();
+                alert(" Project Link Name Can't be blank.");
+                return false;
+
+            }
+
+            else {
+                return confirm('Are you sure you want to  create this?');
+            }
+        }
+
+        function inputLimiter(e, allow) {
+            var AllowableCharacters = '';
+
+            if (allow == 'NameCharactersymbol') {
+                AllowableCharacters = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz./&';
+            }
+            if (allow == 'NameCharacters') {
+                AllowableCharacters = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-.\'';
+            }
+            if (allow == 'Email') {
+                AllowableCharacters = '1234567890@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_.';
+            }
+            if (allow == 'Description') {
+                AllowableCharacters = '1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-.,()/';
+            }
+            if (allow == 'NameCharactersAndNumbers') {
+                AllowableCharacters = '1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-,/.\&';
+            }
+            if (allow == 'Numbers') {
+                AllowableCharacters = '1234567890';
+            }
+            if (allow == 'Decimal') {
+                AllowableCharacters = '1234567890.';
+            }
+            if (allow == 'Filename') {
+                AllowableCharacters = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/';
+            }
+            var k;
+            k = document.all ? parseInt(e.keyCode) : parseInt(e.which);
+            if (k != 13 && k != 8 && k != 0) {
+                if ((e.ctrlKey == false) && (e.altKey == false)) {
+                    return (AllowableCharacters.indexOf(String.fromCharCode(k)) != -1);
+                }
+                else {
+                    return true;
+                }
+            }
+            else {
+                return true;
+            }
+        }
+        function ClearField() {
+                $('#txtprojectname').val('');
+                $('#txtprojectdesc').val('');
+                }
+       
+    </script>
+
+}
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>Add Project Link</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Project Link</li>
+                    <li class="breadcrumb-item active" aria-current="page">Add Project Link</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link active" asp-controller="ProjectLink" asp-action="AddProjectLink">Add</a>
+                        <a class="nav-item nav-link" asp-controller="ProjectLink" asp-action="ViewActiveProjectLink">Active</a>
+                        <a class="nav-item nav-link" asp-controller="ProjectLink" asp-action="ViewInActiveProjectLink">InActive</a>
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="frmCreateProject" data-parsley-validate novalidate method="post" asp-action="AddProjectLink" asp-controller="ProjectLink" asp-area="" asp-antiforgery="true" onsubmit="return validateForm()">
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label">
+                                Project Link Name
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+
+                                <input asp-for="NVCHPROJECTLINKNAME" type="text" id="txtprojectname" name="NVCHPROJECTLINKNAME"
+                                       class="form-control" Onkeypress="return inputLimiter(event,'NameCharactersAndNumbers')"
+                                       placeholder="Enter Project Link Name" autocomplete="off" maxlength="50" autofocus />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label">
+                                Project Link Description
+                            </label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon">:</span>
+                                <textarea asp-for="NVCHPROJECTLINKDESC" type="text" id="txtprojectdesc" name="NVCHPROJECTLINKDESC" Onkeypress="return inputLimiter(event,'Description')" class="form-control" placeholder="EnterProject  Description" autocomplete="off" maxlength="200">
+
+                </textarea>
+                            </div>
+
+
+                            <input asp-for="INTCREATEDBY" type="hidden" value='@ViewBag.CREATEDBY' />
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> <span class="text-danger"></span></label>
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <span class="colon"></span>
+                                <button type="submit" name="submit" id="btnsubmit" class="btn btn-primary mb-1t white-text" title="Submit" value="Submit">Submit</button>
+                                <button type="button" class="btn btn-danger" title="Reset" onclick="return ClearField();"> Reset </button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

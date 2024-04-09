@@ -1,0 +1,417 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Title = "AddTabMaster";
+    var TabMaxSortNo = ViewBag.TabMaxSortNo;
+}
+<div class="section">
+    <div class="page-title">
+        <div class="title-details">
+            <h4>Add Tab Link</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                    <li class="breadcrumb-item">Menue Manage</li>
+                    <li class="breadcrumb-item active" aria-current="page">Add Tab Link</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs nav-fill" role="tablist">
+                        <a class="nav-item nav-link active" asp-controller="MenueManage" asp-action="AddTabMaster">Add</a>
+                        <a class="nav-item nav-link" asp-controller="MenueManage" asp-action="ViewTabMaster">View</a>
+
+                    </ul>
+                    <div class="indicatorslist">
+                        <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Button Name
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <select id="ddlButton" class="form-control" autofocus>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Tab Name
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <input type="text" id="txtTabName" class="form-control" placeholder="Enter Tab Name" autocomplete="off" maxlength="100" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Function Name
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <select id="ddlFunctionMaster" class="form-control" autofocus>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Open In New Window
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <input id="chkNewWindow" type="checkbox" />
+                        </div>
+                    </div>
+                    @*TabMaxSortNo*@
+                    <div class="form-group row">
+                        <label class="col-12 col-md-2 col-xl-2 control-label">
+                            Tab Sort No :
+                        </label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon">:</span>
+                            <label id="lblSortNo" name="BtnMAxid">@TabMaxSortNo</label>
+                        </div>
+                    </div>
+                    <input id="hdnTab" type="hidden" value="0" />
+                    <div class="form-group row" id="dvsubmit">
+                        <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> <span class="text-danger"></span></label>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <span class="colon"></span>
+                            <input type="button" value="Submit" id="btnsubmit" onclick="AddTabMasterDtl();" class="btn btn-primary mb-1t white-text" />
+                            <input type="button" id="btnReset" value="Reset" onclick="Reset();" class="btn btn-danger" title="Reset" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        // Render TabMaxSortNo into lblSortNo
+        var TabMaxSortNo = @Html.Raw(Json.Serialize(ViewBag.TabMaxSortNo)); // Serialize to JSON
+        document.getElementById("lblSortNo").innerText = TabMaxSortNo;
+    </script>
+}
+<script>
+    $(document).ready(function () {
+        function getUrlVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                vars[key] = decodeURIComponent(value);
+            });
+            return vars;
+        }
+        var id = getUrlVars()["tabid"];
+        if (id != undefined || id != null) {
+            EditTabMasterDetails(id);
+        }
+        BindButton();
+        BindFunction();
+    })
+
+    function Reset() {
+        $('#hdnTab').val(0);
+        $('#txtTabName').val("");
+        $('#ddlButton').val(0);
+        $('#ddlFunctionMaster').val(0);
+        $("#chkNewWindow").prop("checked", false);
+         window.location.href = "@Url.Action("AddTabMaster", "MenueManage")";
+    }
+
+    function EditTabMasterDetails(id) {
+        $.ajax({
+                url: '@Url.Action("EditTabMaster", "MenueManage")',
+                type: 'Get',
+                data: {"TABID":id},
+              success: function (data) {
+                var data1 = JSON.parse(data);
+                 $.each(data1, function (index, item) {
+                     $("#txtTabName").val(item.TABNAME);
+
+                     if (item.OPENINNEWWINDOW == "True") {
+                         $("#chkNewWindow").prop("checked", true);
+                     }
+                     else {
+                         $("#chkNewWindow").prop("checked", false);
+                     }
+                     //--Bind Button
+                        $.ajax({
+                            url: '@Url.Action("BindButton", "MenueManage")',
+                            type: 'Get',
+                            data: {},
+                                success: function (data) {
+                                    var data1 = JSON.parse(data);
+                                    $("#ddlButton").empty();
+                                    $("#ddlButton").append($('<option value="0">--Select Button Name--</option>'));
+                                    $.each(data1, function (index, item) {
+                                        $("#ddlButton").append($('<option>', {
+                                            value: item.BUTTONID,
+                                            text: item.BUTTONNAME
+                                        }));
+                                    });
+                                    $("#ddlButton").val(item.BUTTONID);
+                                }
+                        });
+                     //--Bind Function
+                        $.ajax({
+                            url: '@Url.Action("BindFunction", "MenueManage")',
+                            type: 'Get',
+                            data: {},
+                            success: function (data) {
+                                var data1 = JSON.parse(data);
+                                $("#ddlFunctionMaster").empty();
+                                $("#ddlFunctionMaster").append($('<option value="0">--Select Function Name--</option>'));
+                                $.each(data1, function (index, item) {
+                                    $("#ddlFunctionMaster").append($('<option>', {
+                                        value: item.INTFUNCTIONID,
+                                        text: item.VCHFUNCTION
+                                    }));
+                                });
+                                $("#ddlFunctionMaster").val(item.INTFUNCTIONID);
+                                }
+                        });
+
+                        $("#hdnTab").val(item.TABID);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+        });
+    }
+
+    function AddTabMasterDtl() {
+        if ($("#hdnTab").val() != 0) {
+                $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UpdateTabMasterDetails", "MenueManage")',
+                data: {
+                    //TABID,TABNAME,BUTTONID,INTFUNCTIONID,OPENINNEWWINDOW UpdateTabMasterDetails
+                    "TABID": $('#hdnTab').val(),
+                    "TABNAME": $('#txtTabName').val(),
+                    "BUTTONID": $('#ddlButton').val(),
+                    "INTFUNCTIONID": $('#ddlFunctionMaster').val(),
+                    "OPENINNEWWINDOW": $("#chkNewWindow").prop("checked"),
+                    "INTSORTNUM": $("#lblSortNo").text()
+                },
+                dataType: 'JSON',
+                success: function (data) {
+                    if (JSON.parse(data) == 2) {
+                        alert("Tab Updated Successfully.");
+                        window.location.href = "@Url.Action("ViewTabMaster", "MenueManage")";
+                    }
+                }
+            });
+        }
+        else {
+                $.ajax({
+                type: 'POST',
+                url: '@Url.Action("AddTabMaster", "MenueManage")',
+                data: {
+                    //TABID,TABNAME,BUTTONID,INTFUNCTIONID,OPENINNEWWINDOW UpdateTabMasterDetails
+                    "TABNAME": $('#txtTabName').val(),
+                    "BUTTONID": $('#ddlButton').val(),
+                    "INTFUNCTIONID": $('#ddlFunctionMaster').val(),
+                    "OPENINNEWWINDOW": $("#chkNewWindow").prop("checked"),
+                    "INTSORTNUM": $("#lblSortNo").text()
+                },
+                dataType: 'JSON',
+                success: function (data) {
+                    if (JSON.parse(data) == 1) {
+                        Reset();
+                        alert("Tab Added Successfully.");
+                        window.location.href = "@Url.Action("ViewTabMaster", "MenueManage")";
+                    }
+                }
+            });
+        }
+    }
+
+    function BindButton() {
+         $.ajax({
+                url: '@Url.Action("BindButton", "MenueManage")',
+                type: 'Get',
+                data: {},
+             success: function (data) {
+                    var data1 = JSON.parse(data);
+                 $("#ddlButton").empty();
+                 $("#ddlButton").append($('<option value="0">--Select Button Name--</option>'));
+                    $.each(data1, function (index, item) {
+                        $("#ddlButton").append($('<option>', {
+                            value: item.BUTTONID,
+                            text: item.BUTTONNAME
+                        }));
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+    }
+
+    function BindFunction() {
+         $.ajax({
+                url: '@Url.Action("BindFunction", "MenueManage")',
+                type: 'Get',
+                data: {},
+             success: function (data) {
+                    var data1 = JSON.parse(data);
+                    $("#ddlFunctionMaster").empty();
+                    $("#ddlFunctionMaster").append($('<option value="0">--Select Function Name--</option>'));
+                    $.each(data1, function (index, item) {
+                        $("#ddlFunctionMaster").append($('<option>', {
+                            value: item.INTFUNCTIONID,
+                            text: item.VCHFUNCTION
+                        }));
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*@model CodeGen.Model.PrimaryLink.PrimaryModel
+    @{
+        Layout = "~/Views/Shared/_Layout2.cshtml";
+        ViewBag.Title = "AddTabMaster";
+    }
+    <div class="section">
+
+        <div class="page-title">
+            <div class="title-details">
+                <h4>Add Tab Link</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><span class="icon-home1"></span></li>
+                        <li class="breadcrumb-item">Menue Manage</li>
+                        <li class="breadcrumb-item active" aria-current="page">Add Tab Link</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs nav-fill" role="tablist">
+                            <a class="nav-item nav-link active" asp-controller="MenueManage" asp-action="AddButtonMaster">Add</a>
+                            <a class="nav-item nav-link" asp-controller="MenueManage" asp-action="ViewButtonMaster">View</a>
+
+                        </ul>
+                        <div class="indicatorslist">
+                            <p class="ml-2 text-danger">(*) Indicates mandatory </p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form id="frmCreateButtonMaster" data-parsley-validate novalidate method="post" asp-action="" asp-controller="MenueManage" asp-area="" asp-antiforgery="true" onsubmit="return validateForm()">
+                            <div class="form-group row">
+                                <label class="col-12 col-md-2 col-xl-2 control-label">
+                                    Tab Name
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <span class="colon">:</span>
+                                    <input type="text" id="txtTabName" name="TabName" Onkeypress="return inputLimiter(event,'NameCharactersAndNumbers')" class="form-control" placeholder="Enter Tab Name" autocomplete="off" maxlength="100" />
+                                </div>
+
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-12 col-md-2 col-xl-2 control-label">
+                                    Button Name
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <span class="colon">:</span>
+                                    <select class="form-control" autofocus>
+                                        <option value="value">Select</option>
+                                    </select>
+
+                                </div>
+
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-12 col-md-2 col-xl-2 control-label">
+                                    Function Name
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <span class="colon">:</span>
+                                    <select asp-for="FunctionId" asp-items="@(new SelectList(Model.FunctionList,"INTFUNCTIONID","VCHFUNCTION"))" id="ddlFunctionMaster" class="form-control">
+                                        <option value="0">--Select Function Master --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-12 col-md-2 col-xl-2 control-label">
+                                    External Url
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <span class="colon">:</span>
+                                    <input type="text" asp-for="PlinkName" id="txtPLinkName" name="PlinkName" Onkeypress="return inputLimiter(event,'NameCharactersAndNumbers')" class="form-control" placeholder="Enter Primary Link Name" autocomplete="off" maxlength="100" />
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label class="col-12 col-md-2 col-xl-2 control-label">
+                                    Open In New Window
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <span class="colon">:</span>
+                                    <input id="chkNewWindow" type="checkbox" />
+                                </div>
+                            </div>
+                            <div class="form-group row" id="dvsubmit">
+                                <label class="col-12 col-md-2 col-xl-2 control-label" for="demo-email-input"> <span class="text-danger"></span></label>
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <span class="colon"></span>
+                                    <button type="submit" name="submit" id="btnsubmit" class="btn btn-primary mb-1t white-text" title="Submit" value="Submit">Submit</button>
+                                    <input type="button" id="btnReset" value="Reset" class="btn btn-danger" title="Reset" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
